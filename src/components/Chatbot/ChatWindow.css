@@ -1,8 +1,8 @@
 .chatbot-container {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1000;
+    /* Removed fixed positioning for better embedding flexibility */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
@@ -42,8 +42,15 @@
 }
 
 @keyframes slideUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .chat-header {
@@ -108,7 +115,7 @@
     border-radius: 18px;
     font-size: 0.95rem;
     line-height: 1.4;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .message.user .message-bubble {

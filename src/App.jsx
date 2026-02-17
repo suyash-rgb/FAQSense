@@ -4,6 +4,12 @@ import FlowEditor from './components/FlowEditor/FlowEditor'
 import './App.css'
 
 function App() {
+  const isWidget = new URLSearchParams(window.location.search).get('mode') === 'widget';
+
+  if (isWidget) {
+    return <ChatWindow />;
+  }
+
   return (
     <div className="app-container">
       <header className="app-header">

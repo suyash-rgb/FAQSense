@@ -18,6 +18,7 @@
   font-weight: 800;
   background: linear-gradient(135deg, #6366f1, #a855f7);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -46,4 +47,10 @@
 
 .placeholder-content p {
   color: #64748b;
+}
+
+.app-container .chatbot-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
 }
