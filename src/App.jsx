@@ -2,6 +2,7 @@ import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import LandingPage from './pages/LandingPage'
 import Dashboard from './pages/Dashboard'
+import AuthPage from './pages/AuthPage'
 import ChatWindow from './components/Chatbot/ChatWindow'
 import './App.css'
 
@@ -17,6 +18,8 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/login" element={<AuthPage type="login" />} />
+        <Route path="/signup" element={<AuthPage type="signup" />} />
       </Routes>
     </Router>
   )

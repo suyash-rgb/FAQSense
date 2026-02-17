@@ -43,15 +43,33 @@
     align-items: center;
 }
 
-.nav-links a {
+.nav-links a,
+.nav-link {
     color: var(--robot-text);
     text-decoration: none;
     font-weight: 500;
     transition: color 0.3s;
 }
 
-.nav-links a:hover {
+.nav-links a:hover,
+.nav-link:hover {
     color: var(--robot-accent);
+}
+
+.signup-btn {
+    background: transparent;
+    color: var(--robot-accent) !important;
+    border: 1px solid var(--robot-accent);
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.signup-btn:hover {
+    background: rgba(0, 242, 255, 0.1);
+    box-shadow: 0 0 10px var(--robot-glow);
 }
 
 .nav-btn {
