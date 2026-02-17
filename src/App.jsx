@@ -1,6 +1,8 @@
 import React from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import LandingPage from './pages/LandingPage'
+import Dashboard from './pages/Dashboard'
 import ChatWindow from './components/Chatbot/ChatWindow'
-import FlowEditor from './components/FlowEditor/FlowEditor'
 import './App.css'
 
 function App() {
@@ -11,18 +13,12 @@ function App() {
   }
 
   return (
-    <div className="app-container">
-      <header className="app-header">
-        <h1>FAQSense Dashboard</h1>
-        <p>Manage your chatbot and visualize Q&A flows.</p>
-      </header>
-
-      <main className="app-content">
-        <FlowEditor />
-      </main>
-
-      <ChatWindow />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
+    </Router>
   )
 }
 
