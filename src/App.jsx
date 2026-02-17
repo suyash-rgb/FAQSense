@@ -1,5 +1,6 @@
 import React from 'react'
 import ChatWindow from './components/Chatbot/ChatWindow'
+import FlowEditor from './components/FlowEditor/FlowEditor'
 import './App.css'
 
 function App() {
@@ -11,10 +12,7 @@ function App() {
       </header>
 
       <main className="app-content">
-        <div className="placeholder-content">
-          <h2>Flow Editor coming soon...</h2>
-          <p>The chatbot preview is in the bottom right corner.</p>
-        </div>
+        <FlowEditor />
       </main>
 
       <ChatWindow />
