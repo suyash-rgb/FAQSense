@@ -57,10 +57,35 @@ const FlowEditor = () => {
         setNodes((nds) => nds.concat(newNode));
     };
 
+    const handleDownloadTemplate = () => {
+        const csvContent = "Questions,Answers\n" +
+            "Hi,Hello! How can I help you today?\n" +
+            "Hello,Greetings! What can 1 assist you with?\n" +
+            "What is FAQSense?,FAQSense is an AI-powered FAQ management and chatbot platform.\n";
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", "faq_template.csv");
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     return (
         <div className="flow-editor-wrapper">
             <div className="flow-toolbar">
                 <button onClick={addNode}>Add Node</button>
+                <button className="template-btn" onClick={handleDownloadTemplate}>Download FAQ Template</button>
+                <div className="upload-container">
+                    <button className="upload-btn">Upload FAQs</button>
+                    <div className="info-tooltip">
+                        <span className="tooltip-icon">?</span>
+                        <div className="tooltip-content">Supports CSV and Excel files</div>
+                    </div>
+                </div>
                 <button className="save-btn" onClick={handleSave}>Save Flow</button>
             </div>
             <div className="flow-container">
