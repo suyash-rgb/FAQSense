@@ -1,0 +1,4 @@
+Question,Answer
+What is FAQSense?,FAQSense is an industry-standard FAQ management system using direct CSV lookup.
+How to upload CSV?,You can upload a CSV via the /faq/upload endpoint.
+Who created this?,Antigravity created this backend setup.

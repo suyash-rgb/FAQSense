@@ -1,0 +1,7 @@
+feat: implement direct CSV-based FAQ lookup
+
+- Implement FAQ feature using direct CSV lookup with Pandas
+- Add CSV upload and question-answer retrieval endpoints
+- Remove SQLAlchemy database layer for simplicity
+- Streamline app structure to use file-based storage
+- Update dependencies with python-multipart
