@@ -1,5 +1,12 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignUpButton,
+  UserButton,
+} from "@clerk/clerk-react";
 import LandingPage from './pages/LandingPage'
 import Dashboard from './pages/Dashboard'
 import AuthPage from './pages/AuthPage'

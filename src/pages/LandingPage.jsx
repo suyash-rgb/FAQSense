@@ -1,5 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import {
+    SignedIn,
+    SignedOut,
+    SignInButton,
+    SignUpButton,
+    UserButton,
+} from "@clerk/clerk-react";
 import './LandingPage.css';
 
 const Navbar = () => (
@@ -9,8 +16,17 @@ const Navbar = () => (
             <a href="#features">Features</a>
             <a href="#reviews">Reviews</a>
             <a href="#faq">FAQ</a>
-            <Link to="/login" className="nav-link">Login</Link>
-            <Link to="/signup" className="signup-btn">Sign Up</Link>
+            <SignedOut>
+                <SignInButton mode="modal">
+                    <button className="nav-link-btn">Login</button>
+                </SignInButton>
+                <SignUpButton mode="modal">
+                    <button className="signup-btn">Sign Up</button>
+                </SignUpButton>
+            </SignedOut>
+            <SignedIn>
+                <UserButton afterSignOutUrl="/" />
+            </SignedIn>
             <Link to="/dashboard" className="nav-btn">Launch Dashboard</Link>
         </div>
     </nav>

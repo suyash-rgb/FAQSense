@@ -1,0 +1,7 @@
+feat: integrate Clerk authentication into navbar
+
+- Install @clerk/clerk-react SDK
+- Configure ClerkProvider in main.jsx
+- Integrate Clerk components into LandingPage navbar
+- Restore full-width layout by removing #root constraints
+- Clean up temporary auth header and styles
