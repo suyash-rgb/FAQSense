@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Header
 from fastapi_sqlalchemy import db
 from app.schemas.chatbot import ChatbotCreate, ChatbotResponse
 from app.schemas.faq import FAQAskRequest, FAQAskResponse
+from app.schemas.enquiry import EnquiryCreate, EnquiryResponse
 from app.services import chatbot_service
 from typing import List
 
@@ -88,7 +89,20 @@ async def ask_bot(
             )
 
     if not answer:
-        raise HTTPException(status_code=404, detail="Answer not found in this chatbot's database")
+        # Instead of 404, we return the fallback message
+        fallback_msg = "I did not understand that! Please try to rephrase your question or register your query with us."
+        
+        # Log fallback to conversation
+        if request.conversation_id:
+            from app.services import conversation_service
+            conversation_service.log_message(
+                db.session, 
+                request.conversation_id, 
+                sender="bot", 
+                content=fallback_msg
+            )
+            
+        return {"answer": fallback_msg}
     
     return {"answer": answer}
 
@@ -112,3 +126,18 @@ async def delete_chatbot(
         raise HTTPException(status_code=403, detail="Not authorized to access this chatbot")
     chatbot_service.delete_chatbot(db.session, chatbot_id)
     return {"message": f"Chatbot {chatbot_id} deleted successfully"}
+
+@router.post("/{chatbot_id}/enquiries", response_model=EnquiryResponse)
+async def register_enquiry(
+    chatbot_id: int,
+    enquiry_in: EnquiryCreate
+):
+    # Public endpoint for visitors to register their query
+    chatbot = chatbot_service.get_chatbot(db.session, chatbot_id)
+    if not chatbot:
+        raise HTTPException(status_code=404, detail="Chatbot not found")
+    
+    try:
+        return chatbot_service.create_enquiry(db.session, chatbot_id, enquiry_in)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))

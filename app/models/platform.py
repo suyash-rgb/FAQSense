@@ -59,3 +59,15 @@ class Message(Base):
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     
     conversation = relationship("Conversation", back_populates="messages")
+
+class Enquiry(Base):
+    __tablename__ = "enquiries"
+    id = Column(Integer, primary_key=True, index=True)
+    chatbot_id = Column(Integer, ForeignKey("chatbots.id"))
+    query_text = Column(Text)
+    visitor_name = Column(String(255))
+    visitor_email = Column(String(255), nullable=True)
+    visitor_phone = Column(String(50), nullable=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    
+    chatbot = relationship("Chatbot")
