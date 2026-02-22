@@ -1,6 +1,0 @@
-feat: enhance chatbot management and CSV validation
-
-- Implement strict CSV integrity validation (2-column constraint)
-- Refactor chatbot API endpoints to follow RESTful conventions
-- Add delete chatbot functionality in API and service layers
-- Ensure associated CSV files are removed upon chatbot deletion

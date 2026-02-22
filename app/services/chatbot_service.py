@@ -5,7 +5,17 @@ from sqlalchemy.orm import Session
 from app.models.platform import Chatbot
 from app.schemas.chatbot import ChatbotCreate, ChatbotUpdate
 from io import StringIO
-from typing import List
+from typing import List, Optional
+from rapidfuzz import process, fuzz
+from sentence_transformers import SentenceTransformer, util
+from app.core.config import settings
+
+# Load a lightweight pre-trained model for semantic search
+model = SentenceTransformer('all-MiniLM-L6-v2')
+
+# Simple in-memory cache for FAQ embeddings to avoid re-encoding on every request
+# In production, this could be moved to Redis or a vector database
+EMBEDDING_CACHE = {} 
 
 DATA_DIR = "data"
 
@@ -91,11 +101,49 @@ def get_answer_from_chatbot(chatbot: Chatbot, question: str):
     
     df = pd.read_csv(chatbot.csv_file_path)
     
-    # Case-insensitive search
+    # 1. Try Exact Match first (for performance and precision)
     result = df[df["Question"].str.lower().str.strip() == question.lower().strip()]
-    
     if not result.empty:
         return result.iloc[0]["Answer"]
+    
+    # 2. If no exact match, try Fuzzy Match
+    questions = df["Question"].tolist()
+    # extractOne returns (match_string, score, index)
+    match = process.extractOne(
+        question, 
+        questions, 
+        scorer=fuzz.WRatio
+    )
+    
+    if match:
+        best_match, score, index = match
+        if score >= settings.FUZZY_MATCH_THRESHOLD:
+            return df.iloc[index]["Answer"]
+    
+    # 3. If no fuzzy match, try Semantic Match (Paraphrasing)
+    
+    # Cache management: Check if embeddings are already computed for this bot
+    # We use a tuple of questions as the key to detect changes in the CSV
+    cache_key = (chatbot.id, tuple(questions))
+    
+    if cache_key in EMBEDDING_CACHE:
+        faq_embeddings = EMBEDDING_CACHE[cache_key]
+    else:
+        faq_embeddings = model.encode(questions, convert_to_tensor=True)
+        EMBEDDING_CACHE[cache_key] = faq_embeddings
+        
+    query_embedding = model.encode(question, convert_to_tensor=True)
+    
+    # Compute cosine similarity
+    cos_scores = util.cos_sim(query_embedding, faq_embeddings)[0]
+    
+    # Find the most similar question
+    best_score_idx = cos_scores.argmax().item()
+    best_score = cos_scores[best_score_idx].item()
+    
+    if best_score >= settings.SEMANTIC_MATCH_THRESHOLD:
+        return df.iloc[best_score_idx]["Answer"]
+            
     return None
 
 def delete_chatbot(db: Session, chatbot_id: int):
