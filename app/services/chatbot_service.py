@@ -6,6 +6,8 @@ from app.models.platform import Chatbot
 from app.schemas.chatbot import ChatbotCreate, ChatbotUpdate
 from io import StringIO
 from typing import List, Optional
+import re
+import torch
 from rapidfuzz import process, fuzz
 from sentence_transformers import SentenceTransformer, util
 from app.core.config import settings
@@ -14,8 +16,31 @@ from app.core.config import settings
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
 # Simple in-memory cache for FAQ embeddings to avoid re-encoding on every request
-# In production, this could be moved to Redis or a vector database
 EMBEDDING_CACHE = {} 
+
+# Basic English stop words to ignore during keyword matching
+STOP_WORDS = {
+    'i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're", "you've", "you'll", "you'd",
+    'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', "she's", 'her', 'hers',
+    'herself', 'it', "it's", 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which',
+    'who', 'whom', 'this', 'that', "that'll", 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been',
+    'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if',
+    'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between',
+    'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out',
+    'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why',
+    'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not',
+    'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', "don't", 'should',
+    "should've", 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't", 'couldn', "couldn't",
+    'didn', "didn't", 'doesn', "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven', "haven't", 'isn', "isn't",
+    'ma', 'mightn', "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan', "shan't", 'shouldn', "shouldn't",
+    'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't"
+}
+
+def get_keywords(text: str) -> set:
+    """Extract significant lowercase words from text, ignoring stop words and punctuation."""
+    import re
+    words = re.findall(r'\b\w+\b', text.lower())
+    return {w for w in words if w not in STOP_WORDS}
 
 DATA_DIR = "data"
 
@@ -108,22 +133,26 @@ def get_answer_from_chatbot(chatbot: Chatbot, question: str):
     
     # 2. If no exact match, try Fuzzy Match
     questions = df["Question"].tolist()
-    # extractOne returns (match_string, score, index)
+    # Using token_set_ratio for a more stable and less aggressive overlap check
     match = process.extractOne(
         question, 
         questions, 
-        scorer=fuzz.WRatio
+        scorer=fuzz.token_set_ratio
     )
     
     if match:
         best_match, score, index = match
         if score >= settings.FUZZY_MATCH_THRESHOLD:
-            return df.iloc[index]["Answer"]
+            # Add keyword guard even for fuzzy if not a perfect match
+            query_keywords = get_keywords(question)
+            match_keywords = get_keywords(best_match)
+            overlap = query_keywords.intersection(match_keywords)
+            
+            if score > 95 or len(overlap) >= settings.MIN_KEYWORD_OVERLAP:
+                return df.iloc[index]["Answer"]
     
     # 3. If no fuzzy match, try Semantic Match (Paraphrasing)
     
-    # Cache management: Check if embeddings are already computed for this bot
-    # We use a tuple of questions as the key to detect changes in the CSV
     cache_key = (chatbot.id, tuple(questions))
     
     if cache_key in EMBEDDING_CACHE:
@@ -133,16 +162,51 @@ def get_answer_from_chatbot(chatbot: Chatbot, question: str):
         EMBEDDING_CACHE[cache_key] = faq_embeddings
         
     query_embedding = model.encode(question, convert_to_tensor=True)
-    
-    # Compute cosine similarity
     cos_scores = util.cos_sim(query_embedding, faq_embeddings)[0]
     
-    # Find the most similar question
-    best_score_idx = cos_scores.argmax().item()
-    best_score = cos_scores[best_score_idx].item()
+    top_results = torch.topk(cos_scores, k=min(5, len(questions)))
     
+    # Faithfulness Check 1: Rerank by Keyword Overlap
+    # Even if semantic score is slightly lower, more keyword match is often better
+    query_keywords = get_keywords(question)
+    candidates = []
+    
+    for i in range(len(top_results.values)):
+        idx = top_results.indices[i].item()
+        score = top_results.values[i].item()
+        matched_q = questions[idx]
+        match_keywords = get_keywords(matched_q)
+        overlap = query_keywords.intersection(match_keywords)
+        
+        candidates.append({
+            'index': idx,
+            'score': score,
+            'overlap_count': len(overlap),
+            'question': matched_q
+        })
+    
+    # Sort by overlap count (primary) then semantic score (secondary)
+    candidates.sort(key=lambda x: (x['overlap_count'], x['score']), reverse=True)
+    
+    best_candidate = candidates[0]
+    best_score = best_candidate['score']
+    best_index = best_candidate['index']
+    
+    # Faithfulness Check 2: Score Gap Analysis for Ambiguity
+    if len(candidates) > 1:
+        second_best = candidates[1]
+        # Only check gap if they have the same overlap count (otherwise overlap count is the decider)
+        if best_candidate['overlap_count'] == second_best['overlap_count']:
+            gap = best_score - second_best['score']
+            if gap < settings.AMBIGUITY_THRESHOLD:
+                return None
+
+    # Faithfulness Check 3: Threshold and Keyword Guard
     if best_score >= settings.SEMANTIC_MATCH_THRESHOLD:
-        return df.iloc[best_score_idx]["Answer"]
+        # If score is very high, we can be more lenient with keywords
+        # If score is lower, we REQUIRE at least one keyword
+        if best_score > settings.CONFIDENCE_THRESHOLD or best_candidate['overlap_count'] >= settings.MIN_KEYWORD_OVERLAP:
+            return df.iloc[best_index]["Answer"]
             
     return None
 

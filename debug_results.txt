@@ -1,0 +1,24 @@
+
+QUERY: When is the shop open?
+  Best Match: 'How can I contact sales?' (Score: 0.3940)
+  Second Best: 'What are your hours?' (Score: 0.3110)
+  Gap: 0.0830
+  Keywords Query: {'shop', 'open'}
+  Keywords Match: {'contact', 'sales'}
+  Overlap: set() (Count: 0)
+
+QUERY: How to contact them?
+  Best Match: 'How can I contact support?' (Score: 0.6991)
+  Second Best: 'How can I contact sales?' (Score: 0.5553)
+  Gap: 0.1438
+  Keywords Query: {'contact'}
+  Keywords Match: {'contact', 'support'}
+  Overlap: {'contact'} (Count: 1)
+
+QUERY: When can I move in?
+  Best Match: 'What are your hours?' (Score: 0.2192)
+  Second Best: 'How can I contact support?' (Score: 0.1475)
+  Gap: 0.0717
+  Keywords Query: {'move'}
+  Keywords Match: {'hours'}
+  Overlap: set() (Count: 0)
