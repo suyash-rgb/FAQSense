@@ -1,7 +1,5 @@
-feat: implement conversation engine and logging
+feat: implement delete chatbot functionality
 
-- Add schemas and services for conversation sessions
-- Implement automatic message logging in FAQ lookup
-- Create endpoints for chat history retrieval
-- Integrate conversation router in main.py
-- Refactor ask_bot to support session-based tracking
+- Added delete_chatbot function to service layer to handle DB record and CSV file deletion
+- Implemented DELETE /chatbots/{id} endpoint with ownership verification
+- Added GET /chatbots/{id} endpoint for single bot retrieval

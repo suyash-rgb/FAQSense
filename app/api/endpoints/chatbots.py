@@ -12,7 +12,7 @@ async def get_current_user_id(x_user_id: str = Header(...)):
     # In a real app, this would verify a JWT token
     return x_user_id
 
-@router.post("/", response_model=ChatbotResponse, status_code=201)
+@router.post("/chatbot", response_model=ChatbotResponse, status_code=201)
 async def create_new_chatbot(
     chatbot_in: ChatbotCreate,
     user_id: str = Depends(get_current_user_id)
@@ -22,7 +22,7 @@ async def create_new_chatbot(
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@router.get("/", response_model=List[ChatbotResponse])
+@router.get("/chatbots", response_model=List[ChatbotResponse])
 async def list_chatbots(
     user_id: str = Depends(get_current_user_id)
 ):
@@ -91,3 +91,24 @@ async def ask_bot(
         raise HTTPException(status_code=404, detail="Answer not found in this chatbot's database")
     
     return {"answer": answer}
+
+@router.get("/{chatbot_id}", response_model=ChatbotResponse)
+async def get_chatbot(
+    chatbot_id: int,
+    user_id: str = Depends(get_current_user_id)
+):
+    chatbot = chatbot_service.get_chatbot(db.session, chatbot_id)
+    if not chatbot or chatbot.user_id != user_id:
+        raise HTTPException(status_code=403, detail="Not authorized to access this chatbot")
+    return chatbot
+
+@router.delete("/{chatbot_id}")
+async def delete_chatbot(
+    chatbot_id: int,
+    user_id: str = Depends(get_current_user_id)
+):
+    chatbot = chatbot_service.get_chatbot(db.session, chatbot_id)
+    if not chatbot or chatbot.user_id != user_id:
+        raise HTTPException(status_code=403, detail="Not authorized to access this chatbot")
+    chatbot_service.delete_chatbot(db.session, chatbot_id)
+    return {"message": f"Chatbot {chatbot_id} deleted successfully"}

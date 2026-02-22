@@ -62,3 +62,15 @@ def get_answer_from_chatbot(chatbot: Chatbot, question: str):
     if not result.empty:
         return result.iloc[0]["Answer"]
     return None
+
+def delete_chatbot(db: Session, chatbot_id: int):
+    db_chatbot = get_chatbot(db, chatbot_id)
+    if db_chatbot:
+        # 1. Remove the CSV file from disk
+        if db_chatbot.csv_file_path and os.path.exists(db_chatbot.csv_file_path):
+            os.remove(db_chatbot.csv_file_path)
+        
+        # 2. Delete the database record
+        db.delete(db_chatbot)
+        db.commit()
+    return True
