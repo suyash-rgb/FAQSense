@@ -12,7 +12,7 @@ async def get_current_user_id(x_user_id: str = Header(...)):
     # In a real app, this would verify a JWT token
     return x_user_id
 
-@router.post("/chatbot", response_model=ChatbotResponse, status_code=201)
+@router.post("/", response_model=ChatbotResponse, status_code=201)
 async def create_new_chatbot(
     chatbot_in: ChatbotCreate,
     user_id: str = Depends(get_current_user_id)
@@ -22,7 +22,7 @@ async def create_new_chatbot(
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@router.get("/chatbots", response_model=List[ChatbotResponse])
+@router.get("/", response_model=List[ChatbotResponse])
 async def list_chatbots(
     user_id: str = Depends(get_current_user_id)
 ):

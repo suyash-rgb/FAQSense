@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import csv
 from sqlalchemy.orm import Session
 from app.models.platform import Chatbot
 from app.schemas.chatbot import ChatbotCreate, ChatbotUpdate
@@ -25,6 +26,39 @@ def get_user_chatbots(db: Session, user_id: str) -> List[Chatbot]:
 def get_chatbot(db: Session, chatbot_id: int) -> Chatbot:
     return db.query(Chatbot).filter(Chatbot.id == chatbot_id).first()
 
+def validate_csv_content(file_content: str):
+    """
+    Manually validate that the CSV has exactly 2 columns in every row
+    and the correct headers.
+    """
+    f = StringIO(file_content)
+    reader = csv.reader(f)
+    
+    try:
+        header = next(reader)
+    except StopIteration:
+        raise ValueError("The uploaded CSV is empty")
+
+    if len(header) != 2:
+        raise ValueError(f"Invalid column count: Expected 2, found {len(header)}. Headers must be 'Question,Answer'")
+
+    if header[0].strip() != "Question" or header[1].strip() != "Answer":
+        raise ValueError(f"Invalid headers: Expected 'Question,Answer', found '{header[0]},{header[1]}'")
+
+    line_num = 2 # Starting from row 2
+    for row in reader:
+        if not any(row): # Skip empty lines
+            continue
+        if len(row) != 2:
+            raise ValueError(f"Constraint Violation at row {line_num}: Expected 2 columns, found {len(row)}")
+        
+        if not row[0].strip() or not row[1].strip():
+            raise ValueError(f"Empty value at row {line_num}: Both 'Question' and 'Answer' must be filled")
+        
+        line_num += 1
+    
+    return True
+
 def save_chatbot_csv(db: Session, chatbot_id: int, file_content: str):
     # Ensure data directory exists
     if not os.path.exists(DATA_DIR):
@@ -33,10 +67,11 @@ def save_chatbot_csv(db: Session, chatbot_id: int, file_content: str):
     # Path for this specific chatbot
     file_path = os.path.join(DATA_DIR, f"chatbot_{chatbot_id}.csv")
     
-    # Verify CSV format with pandas
+    # Perform strict manual validation
+    validate_csv_content(file_content)
+    
+    # If validation passes, we can safely load into Pandas
     df = pd.read_csv(StringIO(file_content))
-    if "Question" not in df.columns or "Answer" not in df.columns:
-        raise ValueError("CSV must contain 'Question' and 'Answer' columns")
     
     # Save to disk
     df.to_csv(file_path, index=False)
