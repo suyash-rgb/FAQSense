@@ -1,0 +1,32 @@
+1. Security & Verification
+Webhook Signature Verification: The webhooks/clerk endpoint exists, but we need to implement signature verification using the svix library to ensure only Clerk can call it.
+Environment Setup: provide real MySQL credentials in a .env file and run python init_db.py to verify the table creation.
+
+2. Chatbot Management (CRUD)
+Dynamic FAQ Storage: Currently, the system uses a single 
+data/faq.csv
+. We should implement endpoints to:
+Create a new 
+Chatbot
+ record in the database.
+Upload a CSV specific to that chatbot (stored as data/{chatbot_id}.csv).
+Tie chatbots to the 
+User
+ who created them.
+
+3. Conversation & Analytics Engine
+Chat API: Build endpoints to:
+Start a 
+Conversation
+ for a 
+Visitor
+.
+Log every 
+Message
+ (both visitor question and bot answer) into the database.
+Analytics Dashboard: Develop read-only endpoints for:
+Users: To see the history of conversations for their specific bots.
+Admins: To view platform-wide analytics (total bots, active conversations).
+
+4. Integration Logic
+Context-Aware Fetching: Refactor the current lookup service to accept a chatbot_id, look up its csv_file_path from the database, and then use Pandas to find the answer.

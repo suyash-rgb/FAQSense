@@ -1,8 +1,7 @@
-feat: implement platform database design and clerk sync
+feat: implement multi-chatbot management (Step 2)
 
-- Design MySQL schema for Admin, User, Visitor, and Chatbot
-- Implement models using SQLAlchemy in app/models/platform.py
-- Add fastapi-sqlalchemy middleware for session management
-- Create Clerk webhook endpoint for user authentication sync
-- Add database initialization utility and environment template
-- Dependencies: add pymysql driver
+- Add specialized Chatbot CRUD schemas and services
+- Implement isolated CSV storage per chatbot (data/chatbot_{id}.csv)
+- Add API endpoints for creating, listing, and querying specific bots
+- Integrate chatbot management routes into main.py
+- Update .gitignore to exclude dynamic chatbot CSV data
