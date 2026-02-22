@@ -1,7 +1,8 @@
-feat: implement direct CSV-based FAQ lookup
+feat: implement platform database design and clerk sync
 
-- Implement FAQ feature using direct CSV lookup with Pandas
-- Add CSV upload and question-answer retrieval endpoints
-- Remove SQLAlchemy database layer for simplicity
-- Streamline app structure to use file-based storage
-- Update dependencies with python-multipart
+- Design MySQL schema for Admin, User, Visitor, and Chatbot
+- Implement models using SQLAlchemy in app/models/platform.py
+- Add fastapi-sqlalchemy middleware for session management
+- Create Clerk webhook endpoint for user authentication sync
+- Add database initialization utility and environment template
+- Dependencies: add pymysql driver
