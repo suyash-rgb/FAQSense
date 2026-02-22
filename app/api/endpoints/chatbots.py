@@ -60,6 +60,33 @@ async def ask_bot(
         raise HTTPException(status_code=404, detail="Chatbot not found")
     
     answer = chatbot_service.get_answer_from_chatbot(chatbot, request.question)
+    
+    # Log to conversation if ID provided
+    if request.conversation_id:
+        from app.services import conversation_service
+        # Log visitor message
+        conversation_service.log_message(
+            db.session, 
+            request.conversation_id, 
+            sender="visitor", 
+            content=request.question
+        )
+        # Log bot response
+        if answer:
+            conversation_service.log_message(
+                db.session, 
+                request.conversation_id, 
+                sender="bot", 
+                content=answer
+            )
+        else:
+            conversation_service.log_message(
+                db.session, 
+                request.conversation_id, 
+                sender="bot", 
+                content="[No answer found in knowledge base]"
+            )
+
     if not answer:
         raise HTTPException(status_code=404, detail="Answer not found in this chatbot's database")
     

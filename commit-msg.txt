@@ -1,7 +1,7 @@
-feat: implement multi-chatbot management (Step 2)
+feat: implement conversation engine and logging
 
-- Add specialized Chatbot CRUD schemas and services
-- Implement isolated CSV storage per chatbot (data/chatbot_{id}.csv)
-- Add API endpoints for creating, listing, and querying specific bots
-- Integrate chatbot management routes into main.py
-- Update .gitignore to exclude dynamic chatbot CSV data
+- Add schemas and services for conversation sessions
+- Implement automatic message logging in FAQ lookup
+- Create endpoints for chat history retrieval
+- Integrate conversation router in main.py
+- Refactor ask_bot to support session-based tracking

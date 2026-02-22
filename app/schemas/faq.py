@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class FAQBase(BaseModel):
     question: str
@@ -15,6 +16,7 @@ class FAQ(FAQBase):
 
 class FAQAskRequest(BaseModel):
     question: str
+    conversation_id: Optional[int] = None
 
 class FAQAskResponse(BaseModel):
     answer: str
