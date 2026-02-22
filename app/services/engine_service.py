@@ -35,13 +35,15 @@ def get_keywords(text: str) -> set:
     words = re.findall(r'\b\w+\b', text.lower())
     return {w for w in words if w not in STOP_WORDS}
 
-def find_answer(chatbot_id: int, csv_path: str, question: str) -> str:
+from typing import Tuple, Optional
+
+def find_answer(chatbot_id: int, csv_path: str, question: str) -> Tuple[Optional[str], Optional[str]]:
     """
-    Core engine logic for finding the best answer using a hybrid approach:
-    Exact Match -> Fuzzy Match -> Semantic Match + Faithfulness Checks
+    Core engine logic for finding the best answer using a hybrid approach.
+    Returns: (AnswerText, OriginalFAQQuestion)
     """
     if not os.path.exists(csv_path):
-        return None
+        return None, None
     
     df = pd.read_csv(csv_path)
     questions = df["Question"].tolist()
@@ -49,7 +51,8 @@ def find_answer(chatbot_id: int, csv_path: str, question: str) -> str:
     # 1. Exact Match
     result = df[df["Question"].str.lower().str.strip() == question.lower().strip()]
     if not result.empty:
-        return result.iloc[0]["Answer"]
+        matched_q = result.iloc[0]["Question"]
+        return result.iloc[0]["Answer"], matched_q
     
     # 2. Fuzzy Match
     match = process.extractOne(
@@ -66,7 +69,7 @@ def find_answer(chatbot_id: int, csv_path: str, question: str) -> str:
             overlap = query_keywords.intersection(match_keywords)
             
             if score > 95 or len(overlap) >= settings.MIN_KEYWORD_OVERLAP:
-                return df.iloc[index]["Answer"]
+                return df.iloc[index]["Answer"], best_match
     
     # 3. Semantic Match
     cache_key = (chatbot_id, tuple(questions))
@@ -105,6 +108,7 @@ def find_answer(chatbot_id: int, csv_path: str, question: str) -> str:
     best_candidate = candidates[0]
     best_score = best_candidate['score']
     best_index = best_candidate['index']
+    best_q = best_candidate['question']
     
     # Score Gap Analysis (Ambiguity)
     if len(candidates) > 1:
@@ -112,11 +116,11 @@ def find_answer(chatbot_id: int, csv_path: str, question: str) -> str:
         if best_candidate['overlap_count'] == second_best['overlap_count']:
             gap = best_score - second_best['score']
             if gap < settings.AMBIGUITY_THRESHOLD:
-                return None
+                return None, None
 
     # Threshold and Keyword Guard
     if best_score >= settings.SEMANTIC_MATCH_THRESHOLD:
         if best_score > settings.CONFIDENCE_THRESHOLD or best_candidate['overlap_count'] >= settings.MIN_KEYWORD_OVERLAP:
-            return df.iloc[best_index]["Answer"]
+            return df.iloc[best_index]["Answer"], best_q
             
-    return None
+    return None, None

@@ -60,7 +60,7 @@ async def ask_bot(
     if not chatbot:
         raise HTTPException(status_code=404, detail="Chatbot not found")
     
-    answer = chatbot_service.get_answer_from_chatbot(chatbot, request.question)
+    answer = chatbot_service.get_answer_from_chatbot(chatbot, request.question, db.session)
     
     # Log to conversation if ID provided
     if request.conversation_id:
@@ -173,3 +173,15 @@ async def update_bot_enquiry(
     
     updated = chatbot_service.update_enquiry(db.session, enquiry_id, enquiry_update)
     return updated
+
+@router.get("/{chatbot_id}/top-faqs", response_model=List[str])
+async def get_bot_top_faqs(
+    chatbot_id: int,
+    limit: int = 5
+):
+    # Public endpoint for frontend suggestions
+    chatbot = chatbot_service.get_chatbot(db.session, chatbot_id)
+    if not chatbot:
+        raise HTTPException(status_code=404, detail="Chatbot not found")
+    
+    return chatbot_service.get_top_faqs(db.session, chatbot_id, limit)

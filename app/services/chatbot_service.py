@@ -7,7 +7,7 @@ from app.schemas.chatbot import ChatbotCreate, ChatbotUpdate
 from app.schemas.enquiry import EnquiryCreate, EnquiryUpdate
 from io import StringIO
 from typing import List, Optional
-from app.services import engine_service, enquiry_service
+from app.services import engine_service, enquiry_service, analytics_service
 
 DATA_DIR = "data"
 
@@ -69,7 +69,7 @@ def save_chatbot_csv(db: Session, chatbot_id: int, file_content: str):
         db.refresh(db_chatbot)
     return len(df)
 
-def get_answer_from_chatbot(chatbot: Chatbot, question: str) -> Optional[str]:
+def get_answer_from_chatbot(chatbot: Chatbot, question: str, db: Session = None) -> Optional[str]:
     """
     Orchestrates the answer retrieval by calling the specialized engine service.
     """
@@ -77,7 +77,18 @@ def get_answer_from_chatbot(chatbot: Chatbot, question: str) -> Optional[str]:
         return None
     
     # Delegate core search and matching logic to engine_service
-    return engine_service.find_answer(chatbot.id, chatbot.csv_file_path, question)
+    answer, original_q = engine_service.find_answer(chatbot.id, chatbot.csv_file_path, question)
+    
+    if answer and original_q and db:
+        analytics_service.record_faq_hit(db, chatbot.id, original_q)
+        
+    return answer
+
+def get_top_faqs(db: Session, chatbot_id: int, limit: int = 5) -> List[str]:
+    """
+    Orchestrates retrieving top FAQs via analytics service.
+    """
+    return analytics_service.get_top_faqs(db, chatbot_id, limit)
 
 def create_enquiry(db: Session, chatbot_id: int, enquiry_in: EnquiryCreate) -> Enquiry:
     """

@@ -73,3 +73,13 @@ class Enquiry(Base):
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     
     chatbot = relationship("Chatbot")
+
+class FAQAnalytics(Base):
+    __tablename__ = "faq_analytics"
+    id = Column(Integer, primary_key=True, index=True)
+    chatbot_id = Column(Integer, ForeignKey("chatbots.id"))
+    original_question = Column(Text)
+    hit_count = Column(Integer, default=0)
+    last_hit_at = Column(DateTime, default=datetime.datetime.utcnow)
+    
+    chatbot = relationship("Chatbot")
