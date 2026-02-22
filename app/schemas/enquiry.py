@@ -11,9 +11,15 @@ class EnquiryBase(BaseModel):
 class EnquiryCreate(EnquiryBase):
     pass
 
+class EnquiryUpdate(BaseModel):
+    status: Optional[str] = None # "open", "resolved"
+    admin_notes: Optional[str] = None
+
 class EnquiryResponse(EnquiryBase):
     id: int
     chatbot_id: int
+    status: str
+    admin_notes: Optional[str] = None
     created_at: datetime
 
     class Config:

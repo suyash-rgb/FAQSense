@@ -68,6 +68,8 @@ class Enquiry(Base):
     visitor_name = Column(String(255))
     visitor_email = Column(String(255), nullable=True)
     visitor_phone = Column(String(50), nullable=True)
+    status = Column(String(50), default="open") # "open", "resolved"
+    admin_notes = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     
     chatbot = relationship("Chatbot")

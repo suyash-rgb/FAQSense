@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Header
 from fastapi_sqlalchemy import db
 from app.schemas.chatbot import ChatbotCreate, ChatbotResponse
 from app.schemas.faq import FAQAskRequest, FAQAskResponse
-from app.schemas.enquiry import EnquiryCreate, EnquiryResponse
+from app.schemas.enquiry import EnquiryCreate, EnquiryUpdate, EnquiryResponse
 from app.services import chatbot_service
 from typing import List
 
@@ -141,3 +141,35 @@ async def register_enquiry(
         return chatbot_service.create_enquiry(db.session, chatbot_id, enquiry_in)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+@router.get("/{chatbot_id}/enquiries", response_model=List[EnquiryResponse])
+async def list_bot_enquiries(
+    chatbot_id: int,
+    user_id: str = Depends(get_current_user_id)
+):
+    # Verify ownership
+    chatbot = chatbot_service.get_chatbot(db.session, chatbot_id)
+    if not chatbot or chatbot.user_id != user_id:
+        raise HTTPException(status_code=403, detail="Not authorized to access these enquiries")
+    
+    return chatbot_service.get_enquiries(db.session, chatbot_id)
+
+@router.patch("/{chatbot_id}/enquiries/{enquiry_id}", response_model=EnquiryResponse)
+async def update_bot_enquiry(
+    chatbot_id: int,
+    enquiry_id: int,
+    enquiry_update: EnquiryUpdate,
+    user_id: str = Depends(get_current_user_id)
+):
+    # Verify ownership
+    chatbot = chatbot_service.get_chatbot(db.session, chatbot_id)
+    if not chatbot or chatbot.user_id != user_id:
+        raise HTTPException(status_code=403, detail="Not authorized to modify this enquiry")
+    
+    # Verify enquiry belongs to bot
+    enquiry = chatbot_service.get_enquiry(db.session, enquiry_id)
+    if not enquiry or enquiry.chatbot_id != chatbot_id:
+        raise HTTPException(status_code=404, detail="Enquiry not found for this chatbot")
+    
+    updated = chatbot_service.update_enquiry(db.session, enquiry_id, enquiry_update)
+    return updated

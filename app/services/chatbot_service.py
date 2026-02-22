@@ -4,7 +4,7 @@ import csv
 from sqlalchemy.orm import Session
 from app.models.platform import Chatbot, Enquiry
 from app.schemas.chatbot import ChatbotCreate, ChatbotUpdate
-from app.schemas.enquiry import EnquiryCreate
+from app.schemas.enquiry import EnquiryCreate, EnquiryUpdate
 from io import StringIO
 from typing import List, Optional
 from app.services import engine_service, enquiry_service
@@ -84,6 +84,21 @@ def create_enquiry(db: Session, chatbot_id: int, enquiry_in: EnquiryCreate) -> E
     Orchestrates enquiry registration by calling the specialized enquiry service.
     """
     return enquiry_service.create_enquiry(db, chatbot_id, enquiry_in)
+
+def get_enquiries(db: Session, chatbot_id: int) -> List[Enquiry]:
+    """
+    Orchestrates retrieving all enquiries for a specific chatbot.
+    """
+    return enquiry_service.get_chatbot_enquiries(db, chatbot_id)
+
+def update_enquiry(db: Session, enquiry_id: int, enquiry_update: EnquiryUpdate) -> Enquiry:
+    """
+    Orchestrates updating an enquiry's status or notes.
+    """
+    return enquiry_service.update_enquiry(db, enquiry_id, enquiry_update)
+
+def get_enquiry(db: Session, enquiry_id: int) -> Enquiry:
+    return enquiry_service.get_enquiry(db, enquiry_id)
 
 def delete_chatbot(db: Session, chatbot_id: int):
     db_chatbot = get_chatbot(db, chatbot_id)
