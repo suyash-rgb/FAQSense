@@ -7,7 +7,7 @@ class MessageBase(BaseModel):
     content: str
 
 class MessageCreate(MessageBase):
-    conversation_id: int
+    conversation_id: str
 
 class MessageResponse(MessageBase):
     id: int
@@ -23,7 +23,7 @@ class ConversationCreate(ConversationBase):
     pass
 
 class ConversationResponse(ConversationBase):
-    id: int
+    id: str
     started_at: datetime
     messages: List[MessageResponse] = []
 

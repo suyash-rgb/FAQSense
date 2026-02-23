@@ -14,7 +14,7 @@ async def create_conversation(conv_in: ConversationCreate):
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.get("/{conversation_id}", response_model=ConversationResponse)
-async def get_conversation(conversation_id: int):
+async def get_conversation(conversation_id: str):
     conversation = conversation_service.get_conversation(db.session, conversation_id)
     if not conversation:
         raise HTTPException(status_code=404, detail="Conversation not found")
@@ -23,5 +23,5 @@ async def get_conversation(conversation_id: int):
     return conversation
 
 @router.get("/{conversation_id}/messages", response_model=List[MessageResponse])
-async def get_messages(conversation_id: int):
+async def get_messages(conversation_id: str):
     return conversation_service.get_conversation_history(db.session, conversation_id)

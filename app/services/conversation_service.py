@@ -43,7 +43,7 @@ def get_session_conversation(db: Session, chatbot_id: int, session_id: str) -> C
         
     return conversation
 
-def log_message(db: Session, conversation_id: int, sender: str, content: str) -> Message:
+def log_message(db: Session, conversation_id: str, sender: str, content: str) -> Message:
     db_message = Message(
         conversation_id=conversation_id,
         sender=sender,
@@ -54,10 +54,10 @@ def log_message(db: Session, conversation_id: int, sender: str, content: str) ->
     db.refresh(db_message)
     return db_message
 
-def get_conversation(db: Session, conversation_id: int) -> Optional[Conversation]:
+def get_conversation(db: Session, conversation_id: str) -> Optional[Conversation]:
     return db.query(Conversation).filter(Conversation.id == conversation_id).first()
 
-def get_conversation_history(db: Session, conversation_id: int) -> List[Message]:
+def get_conversation_history(db: Session, conversation_id: str) -> List[Message]:
     return db.query(Message).filter(Message.conversation_id == conversation_id).order_by(Message.created_at.asc()).all()
 
 def get_user_conversations(db: Session, user_id: str) -> List[Conversation]:

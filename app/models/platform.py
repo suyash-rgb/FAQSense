@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime, Text, Boolean, Foreign
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 import datetime
+import uuid
 
 Base = declarative_base()
 
@@ -41,7 +42,7 @@ class Chatbot(Base):
 
 class Conversation(Base):
     __tablename__ = "conversations"
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(String(255), primary_key=True, index=True, default=lambda: str(uuid.uuid4()))
     chatbot_id = Column(Integer, ForeignKey("chatbots.id"))
     visitor_id = Column(String(255), ForeignKey("visitors.id"))
     started_at = Column(DateTime, default=datetime.datetime.utcnow)
@@ -53,7 +54,7 @@ class Conversation(Base):
 class Message(Base):
     __tablename__ = "messages"
     id = Column(Integer, primary_key=True, index=True)
-    conversation_id = Column(Integer, ForeignKey("conversations.id"))
+    conversation_id = Column(String(255), ForeignKey("conversations.id"))
     sender = Column(String(50)) # "visitor" or "bot"
     content = Column(Text)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)

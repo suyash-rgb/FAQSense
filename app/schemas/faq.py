@@ -16,7 +16,7 @@ class FAQ(FAQBase):
 
 class FAQAskRequest(BaseModel):
     question: str
-    conversation_id: Optional[int] = None
+    conversation_id: Optional[str] = None
 
 class FAQAskResponse(BaseModel):
     answer: str
