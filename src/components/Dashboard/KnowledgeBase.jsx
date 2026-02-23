@@ -1,13 +1,27 @@
-import React, { useState } from 'react';
-import { uploadKnowledgeBase } from '../../utils/api';
+import React, { useState, useEffect } from 'react';
+import { uploadKnowledgeBase, getChatbotData } from '../../utils/api';
 import FlowEditor from '../FlowEditor/FlowEditor';
 
-const KnowledgeBase = ({ chatbot, userId }) => {
+const KnowledgeBase = ({ chatbot, userId, onUploadSuccess }) => {
     const [file, setFile] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [message, setMessage] = useState(null);
     const [showFlow, setShowFlow] = useState(false);
-    const [csvData, setCsvData] = useState([]); // In a real app, you'd fetch this from backend
+    const [csvData, setCsvData] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const data = await getChatbotData(userId, chatbot.id);
+                setCsvData(data);
+            } catch (error) {
+                console.error("Error fetching bot data:", error);
+            }
+        };
+        if (chatbot?.id) {
+            fetchData();
+        }
+    }, [chatbot?.id, userId]);
 
     const handleFileChange = (e) => {
         const selectedFile = e.target.files[0];
@@ -22,7 +36,7 @@ const KnowledgeBase = ({ chatbot, userId }) => {
                 const rows = text.split('\n').filter(r => r.trim()).slice(1);
                 const data = rows.map(row => {
                     const [q, a] = row.split(',');
-                    return { Questions: q, Answers: a };
+                    return { Question: q, Answer: a };
                 });
                 setCsvData(data);
             };
@@ -34,7 +48,7 @@ const KnowledgeBase = ({ chatbot, userId }) => {
         let fileToUpload = file;
 
         if (customData) {
-            const csvContent = "Questions,Answers\n" + customData.map(row => `"${row.Questions}","${row.Answers}"`).join('\n');
+            const csvContent = "Question,Answer\n" + customData.map(row => `"${row.Question}","${row.Answer}"`).join('\n');
             fileToUpload = new File([csvContent], 'knowledge_base.csv', { type: 'text/csv' });
         }
 
@@ -50,11 +64,18 @@ const KnowledgeBase = ({ chatbot, userId }) => {
             const result = await uploadKnowledgeBase(userId, chatbot.id, fileToUpload);
             setMessage({
                 type: 'success',
-                text: `Success! Processed ${result.count || 0} FAQs for ${chatbot.name}.`
+                text: `Success! Processed ${result.count} FAQs for ${chatbot.name}.`
             });
+
+            // Redirect to preview tab after brief delay
+            setTimeout(() => {
+                if (onUploadSuccess) onUploadSuccess('preview');
+            }, 1000);
+
             if (!customData) {
                 setFile(null);
-                document.getElementById('faq-upload').value = '';
+                const input = document.getElementById('faq-upload');
+                if (input) input.value = '';
             }
         } catch (error) {
             console.error("Upload error:", error);
@@ -153,7 +174,7 @@ const KnowledgeBase = ({ chatbot, userId }) => {
             <div className="template-download" style={{ marginTop: '20px', fontSize: '0.9rem' }}>
                 <p>Don't have a file? <a href="#" onClick={(e) => {
                     e.preventDefault();
-                    const csvContent = "Questions,Answers\nHi,Hello! How can I help you today?\nWhat is FAQSense?,FAQSense is an AI-powered FAQ management platform.";
+                    const csvContent = "Question,Answer\nHi,Hello! How can I help you today?\nWhat is FAQSense?,FAQSense is an AI-powered FAQ management platform.";
                     const blob = new Blob([csvContent], { type: 'text/csv' });
                     const url = URL.createObjectURL(blob);
                     const link = document.createElement('a');

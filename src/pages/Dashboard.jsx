@@ -69,7 +69,7 @@ const Dashboard = () => {
             </header>
 
             <section className="dashboard-content">
-                {activeTab === 'kb' && <KnowledgeBase chatbot={selectedBot} userId={user.id} />}
+                {activeTab === 'kb' && <KnowledgeBase chatbot={selectedBot} userId={user.id} onUploadSuccess={setActiveTab} />}
                 {activeTab === 'enquiries' && <EnquiryInbox chatbot={selectedBot} userId={user.id} />}
                 {activeTab === 'analytics' && <ChatbotAnalytics chatbot={selectedBot} />}
                 {activeTab === 'preview' && <ChatbotPreview chatbot={selectedBot} />}

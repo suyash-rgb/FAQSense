@@ -82,7 +82,11 @@ const FlowEditorContent = ({ initialData, onSave }) => {
             let allNodes = [];
             let allEdges = [];
             initialData.forEach((item, index) => {
-                const { nodes: pNodes, edges: pEdges } = createPair(index, item.Questions || item.question, item.Answers || item.answer);
+                const { nodes: pNodes, edges: pEdges } = createPair(
+                    index,
+                    item.Question || item.Questions || item.question || '',
+                    item.Answer || item.Answers || item.answer || ''
+                );
                 allNodes = [...allNodes, ...pNodes];
                 allEdges = [...allEdges, ...pEdges];
             });
@@ -122,7 +126,7 @@ const FlowEditorContent = ({ initialData, onSave }) => {
                 const question = sourceNode.data.label;
                 const answer = targetNode.data.label;
                 if (question || answer) {
-                    csvRows.push({ Questions: question, Answers: answer });
+                    csvRows.push({ Question: question, Answer: answer });
                 }
             }
         });

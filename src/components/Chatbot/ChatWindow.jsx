@@ -2,13 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { getTopFaqs, askQuestion, submitEnquiry } from '../../utils/api';
 import './ChatWindow.css';
 
-const ChatWindow = () => {
-    const chatbotId = new URLSearchParams(window.location.search).get('id') || 1;
+const ChatWindow = ({ initialBotId, height = '520px', forceOpen = false }) => {
+    const chatbotId = initialBotId || new URLSearchParams(window.location.search).get('id') || 1;
     const [messages, setMessages] = useState([
         { text: "Hi there! How can I help you today?", sender: 'bot' }
     ]);
     const [input, setInput] = useState('');
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(forceOpen);
     const [topFaqs, setTopFaqs] = useState([]);
     const [conversationId, setConversationId] = useState(null);
     const [showEnquiryForm, setShowEnquiryForm] = useState(false);
@@ -26,8 +26,10 @@ const ChatWindow = () => {
     }, [messages, isTyping]);
 
     useEffect(() => {
-        // Generate a random conversation_id for this session
+        // Reset messages and session when bot changes
+        setMessages([{ text: "Hi there! How can I help you today?", sender: 'bot' }]);
         setConversationId(`conv_${Math.random().toString(36).substr(2, 9)}`);
+        setShowEnquiryForm(false);
 
         // Fetch suggestions
         const fetchSuggestions = async () => {
@@ -90,7 +92,7 @@ const ChatWindow = () => {
             )}
 
             {isOpen && (
-                <div className="chat-window glass">
+                <div className="chat-window glass" style={{ height }}>
                     <div className="chat-header">
                         <h3>FAQSense Chat</h3>
                         <button className="close-btn" onClick={() => setIsOpen(false)}>×</button>

@@ -40,6 +40,13 @@ export const uploadKnowledgeBase = async (userId, chatbotId, file) => {
     return response.data;
 };
 
+export const getChatbotData = async (userId, chatbotId) => {
+    const response = await api.get(`/chatbots/${chatbotId}/data`, {
+        headers: getHeaders(userId)
+    });
+    return response.data;
+};
+
 export const getEnquiries = async (userId, chatbotId) => {
     const response = await api.get(`/chatbots/${chatbotId}/enquiries`, {
         headers: getHeaders(userId)

@@ -38,6 +38,8 @@
     flex-direction: column;
     overflow: hidden;
     animation: slideUp 0.4s ease-out;
+    margin: 0 auto;
+    /* Added for centering in preview */
 }
 
 /* Glassmorphism */
