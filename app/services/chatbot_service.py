@@ -69,6 +69,15 @@ def save_chatbot_csv(db: Session, chatbot_id: int, file_content: str):
         db.refresh(db_chatbot)
     return len(df)
 
+def get_chatbot_data(chatbot_id: int):
+    file_path = os.path.join(DATA_DIR, f"chatbot_{chatbot_id}.csv")
+    if not os.path.exists(file_path):
+        return []
+    
+    df = pd.read_csv(file_path)
+    # Convert to list of dicts: [{"Question": "...", "Answer": "..."}, ...]
+    return df.to_dict(orient="records")
+
 def get_answer_from_chatbot(chatbot: Chatbot, question: str, db: Session = None) -> Optional[str]:
     """
     Orchestrates the answer retrieval by calling the specialized engine service.

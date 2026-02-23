@@ -26,6 +26,23 @@ def start_conversation(db: Session, chatbot_id: int, visitor_id: str) -> Convers
     db.refresh(db_conversation)
     return db_conversation
 
+def get_session_conversation(db: Session, chatbot_id: int, session_id: str) -> Conversation:
+    """
+    Finds or creates a conversation record for a given session string.
+    This allows the frontend to pass a random string and we manage the DB ID internally.
+    """
+    # Try to find an existing conversation for this session (visitor_id) and chatbot
+    # Note: In a real app, you might want to expire sessions or have more complex mapping.
+    conversation = db.query(Conversation).filter(
+        Conversation.chatbot_id == chatbot_id,
+        Conversation.visitor_id == session_id
+    ).first()
+    
+    if not conversation:
+        conversation = start_conversation(db, chatbot_id, session_id)
+        
+    return conversation
+
 def log_message(db: Session, conversation_id: int, sender: str, content: str) -> Message:
     db_message = Message(
         conversation_id=conversation_id,

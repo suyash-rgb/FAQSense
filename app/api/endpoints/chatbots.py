@@ -61,9 +61,24 @@ async def upload_bot_csv(
     content = await file.read()
     try:
         count = chatbot_service.save_chatbot_csv(db.session, chatbot_id, content.decode("utf-8"))
-        return {"message": f"Successfully mapped {count} records to chatbot {chatbot_id}"}
+        return {
+            "message": f"Successfully mapped {count} records to chatbot {chatbot_id}",
+            "count": count
+        }
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+@router.get("/{chatbot_id}/data")
+async def get_bot_data(
+    chatbot_id: int,
+    user_id: str = Depends(get_current_user_id)
+):
+    # Verify ownership
+    chatbot = chatbot_service.get_chatbot(db.session, chatbot_id)
+    if not chatbot or chatbot.user_id != user_id:
+        raise HTTPException(status_code=403, detail="Not authorized to access this chatbot")
+    
+    return chatbot_service.get_chatbot_data(chatbot_id)
 
 @router.post("/{chatbot_id}/ask", response_model=FAQAskResponse)
 async def ask_bot(
@@ -80,10 +95,14 @@ async def ask_bot(
     # Log to conversation if ID provided
     if request.conversation_id:
         from app.services import conversation_service
+        # Resolve the session string to an internal DB ID
+        conv = conversation_service.get_session_conversation(db.session, chatbot_id, request.conversation_id)
+        internal_id = conv.id
+
         # Log visitor message
         conversation_service.log_message(
             db.session, 
-            request.conversation_id, 
+            internal_id, 
             sender="visitor", 
             content=request.question
         )
@@ -91,14 +110,14 @@ async def ask_bot(
         if answer:
             conversation_service.log_message(
                 db.session, 
-                request.conversation_id, 
+                internal_id, 
                 sender="bot", 
                 content=answer
             )
         else:
             conversation_service.log_message(
                 db.session, 
-                request.conversation_id, 
+                internal_id, 
                 sender="bot", 
                 content="[No answer found in knowledge base]"
             )
@@ -109,10 +128,12 @@ async def ask_bot(
         
         # Log fallback to conversation
         if request.conversation_id:
-            from app.services import conversation_service
+            # We already have internal_id if it went through the above block, 
+            # but let's be safe or just define it better.
+            conv = conversation_service.get_session_conversation(db.session, chatbot_id, request.conversation_id)
             conversation_service.log_message(
                 db.session, 
-                request.conversation_id, 
+                conv.id, 
                 sender="bot", 
                 content=fallback_msg
             )
