@@ -1,0 +1,32 @@
+feat: major dashboard refactor and interactive flow designer integration
+
+This commit introduces a significant overhaul of the dashboard and chatbot management system:
+
+- **Dashboard Layout Transformation**:
+    - Refactored the dashboard from a sidebar-based chatbot list to a card-based grid layout in the main window.
+    - Updated sidebar to serve as a global navigation hub.
+    - Added a `ChatbotCard` component with a premium feel for chatbot selection.
+
+- **Enhanced Chatbot Management Suite**:
+    - Introduced a multi-tab management interface for selected chatbots.
+    - New sections added: Preview, All Conversations, and Settings placeholders.
+    - Refined Knowledge Base, Enquiries, and Analytics views.
+    - Implemented a "Back" button for seamless navigation between chatbot collection and individual bot management.
+
+- **Interactive Flow Designer (React Flow Integration)**:
+    - Integrated a node-based "Flow Designer" for visual knowledge base management.
+    - Developed custom Question and Answer nodes with inline text editing.
+    - Enabled automatic Question-Answer pair creation with animated connection lines.
+    - Integrated CSV data synchronization between the Flow Designer and backend upload logic.
+    - Implemented automatic layout centering and interactive zoom/pan controls.
+
+- **UI/UX & Aesthetic Improvements**:
+    - Complete CSS overhaul of the dashboard for a more premium, modern look.
+    - Replaced generic tab buttons with high-contrast, segmented toggle controls.
+    - Optimized layout responsiveness and typography across management sections.
+    - Added decorative tool icons and improved color harmony.
+
+- **Technical Fixes**:
+    - Resolved duplicated import errors in `Dashboard.jsx`.
+    - Improved component modularity by extracting `ChatbotCard`, `CustomNodes`, and `FlowEditor`.
+    - Integrated `ReactFlowProvider` to ensure stable rendering of flow components.

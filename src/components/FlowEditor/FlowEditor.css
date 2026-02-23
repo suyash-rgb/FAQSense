@@ -1,150 +1,152 @@
 .flow-editor-wrapper {
-    width: 100%;
-    height: 100%;
-    min-height: 600px;
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
+    background: #fdfdfd;
+    border-radius: 16px;
+    border: 1px solid #e5e7eb;
     overflow: hidden;
-    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 .flow-toolbar {
-    padding: 15px 20px;
-    border-bottom: 1px solid #e2e8f0;
-    display: flex;
-    gap: 10px;
-}
-
-.flow-toolbar button {
-    padding: 8px 16px;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
+    padding: 16px 24px;
     background: white;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.2s;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.flow-toolbar button:hover {
-    background: #f8fafc;
-    border-color: #cbd5e1;
+.toolbar-left,
+.toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
 }
 
-.flow-toolbar .template-btn {
-    border-color: #94a3b8;
-    color: #475569;
-}
-
-.flow-toolbar .template-btn:hover {
-    background: #f1f5f9;
-    border-color: #64748b;
-    color: #1e293b;
-}
-
-.flow-toolbar .save-btn {
+.add-btn {
     background: #6366f1;
     color: white;
     border: none;
-    margin-left: auto;
-}
-
-.flow-toolbar .save-btn:hover {
-    background: #4f46e5;
-}
-
-.upload-container {
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 10px;
-}
-
-.info-tooltip {
-    position: relative;
-    display: inline-flex;
-}
-
-.tooltip-icon {
-    width: 18px;
-    height: 18px;
-    background: #f1f5f9;
-    border: 1px solid #cbd5e1;
-    color: #64748b;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: bold;
-    cursor: help;
+    gap: 8px;
     transition: all 0.2s;
 }
 
-.tooltip-icon:hover {
-    background: #e2e8f0;
-    color: #334155;
-    border-color: #94a3b8;
+.add-btn:hover {
+    background: #4f46e5;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.4);
 }
 
-.tooltip-content {
-    visibility: hidden;
-    position: absolute;
-    left: 140%;
-    top: 50%;
-    transform: translateY(-50%) translateX(-10px);
-    background: #1e293b;
+.save-btn {
+    background: #10b981;
     color: white;
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 12px;
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity 0.2s, transform 0.2s;
-    pointer-events: none;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
-.tooltip-content::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    right: 100%;
-    margin-top: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: transparent #1e293b transparent transparent;
+.save-btn:hover {
+    background: #059669;
+    box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.4);
 }
 
-.info-tooltip:hover .tooltip-content {
-    visibility: visible;
-    opacity: 1;
-    transform: translateY(-50%) translateX(0);
+.clear-btn {
+    background: transparent;
+    color: #ef4444;
+    border: 1px solid #fecaca;
+    padding: 9px 16px;
+    border-radius: 10px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.clear-btn:hover {
+    background: #fef2f2;
+}
+
+.flow-stats {
+    font-size: 0.9rem;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+/* Custom Node Styles */
+.custom-node {
+    width: 250px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    border: 2px solid transparent;
+    transition: border-color 0.2s;
+}
+
+.custom-node:hover {
+    border-color: #6366f1;
+}
+
+.question-node {
+    border-left: 4px solid #6366f1;
+}
+
+.answer-node {
+    border-left: 4px solid #10b981;
+}
+
+.node-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 8px 12px;
+    background: #f9fafb;
+    border-bottom: 1px solid #f3f4f6;
+    color: #6b7280;
+}
+
+.node-content {
+    padding: 10px;
+}
+
+.node-content textarea {
+    width: 100%;
+    min-height: 60px;
+    border: none;
+    resize: none;
+    font-size: 0.9rem;
+    color: #374151;
+    outline: none;
+    padding: 4px;
+    font-family: inherit;
 }
 
 .flow-container {
-    flex: 1;
+    background: #fafafa;
 }
 
-.react-flow__node {
-    border-radius: 12px;
-    padding: 10px 15px;
-    font-size: 14px;
-    font-weight: 500;
-    text-align: center;
-    border: 2px solid #6366f1;
-    background: white;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+.flow-footer {
+    padding: 12px 24px;
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
 }
 
-.react-flow__edge-path {
-    stroke: #94a3b8;
-    stroke-width: 2;
+.flow-footer p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #6b7280;
 }
 
-.react-flow__controls {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    border: none;
+.react-flow__handle {
+    width: 10px;
+    height: 10px;
+    background: #6366f1;
 }

@@ -1,33 +1,103 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import ReactFlow, {
     addEdge,
     Background,
     Controls,
     applyEdgeChanges,
-    applyNodeChanges
+    applyNodeChanges,
+    MiniMap,
+    ReactFlowProvider,
+    useReactFlow
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import './FlowEditor.css';
+import { QuestionNode, AnswerNode } from './CustomNodes';
 
-const initialNodes = [
-    {
-        id: '1',
-        data: { label: 'Q: How to reset password?' },
-        position: { x: 250, y: 5 },
-        type: 'input'
-    },
-    {
-        id: '2',
-        data: { label: 'A: Go to settings and click reset.' },
-        position: { x: 250, y: 100 }
-    },
-];
+const nodeTypes = {
+    question: QuestionNode,
+    answer: AnswerNode,
+};
 
-const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }];
+const FlowEditorContent = ({ initialData, onSave }) => {
+    const [nodes, setNodes] = useState([]);
+    const [edges, setEdges] = useState([]);
+    const [rfInstance, setRfInstance] = useState(null);
+    const { fitView } = useReactFlow();
 
-const FlowEditor = () => {
-    const [nodes, setNodes] = useState(initialNodes);
-    const [edges, setEdges] = useState(initialEdges);
+    const onNodeDataChange = useCallback((id, newLabel) => {
+        setNodes((nds) =>
+            nds.map((node) => {
+                if (node.id === id) {
+                    return {
+                        ...node,
+                        data: {
+                            ...node.data,
+                            label: newLabel,
+                        },
+                    };
+                }
+                return node;
+            })
+        );
+    }, []);
+
+    const createPair = useCallback((index, qText = '', aText = '') => {
+        const id = index || Date.now();
+        const qId = `q-${id}`;
+        const aId = `a-${id}`;
+
+        const qNode = {
+            id: qId,
+            type: 'question',
+            data: {
+                label: qText,
+                onChange: (val) => onNodeDataChange(qId, val)
+            },
+            position: { x: 100, y: index * 180 + 50 },
+        };
+
+        const aNode = {
+            id: aId,
+            type: 'answer',
+            data: {
+                label: aText,
+                onChange: (val) => onNodeDataChange(aId, val)
+            },
+            position: { x: 500, y: index * 180 + 50 },
+        };
+
+        const edge = {
+            id: `e-${id}`,
+            source: qId,
+            target: aId,
+            animated: true,
+            style: { stroke: '#6366f1', strokeWidth: 2 }
+        };
+
+        return { nodes: [qNode, aNode], edges: [edge] };
+    }, [onNodeDataChange]);
+
+    useEffect(() => {
+        if (initialData && initialData.length > 0) {
+            let allNodes = [];
+            let allEdges = [];
+            initialData.forEach((item, index) => {
+                const { nodes: pNodes, edges: pEdges } = createPair(index, item.Questions || item.question, item.Answers || item.answer);
+                allNodes = [...allNodes, ...pNodes];
+                allEdges = [...allEdges, ...pEdges];
+            });
+            setNodes(allNodes);
+            setEdges(allEdges);
+
+            // Allow time for render before fitView
+            setTimeout(() => fitView(), 100);
+        } else if (nodes.length === 0) {
+            // Start with one empty pair if totally empty
+            const { nodes: pNodes, edges: pEdges } = createPair(0);
+            setNodes(pNodes);
+            setEdges(pEdges);
+        }
+    }, [initialData]);
 
     const onNodesChange = useCallback(
         (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -38,71 +108,88 @@ const FlowEditor = () => {
         [setEdges]
     );
     const onConnect = useCallback(
-        (connection) => setEdges((eds) => addEdge(connection, eds)),
+        (connection) => setEdges((eds) => addEdge({ ...connection, animated: true, style: { stroke: '#6366f1', strokeWidth: 2 } }, eds)),
         [setEdges]
     );
 
     const handleSave = () => {
-        const flowData = { nodes, edges };
-        console.log('Saving flow data:', flowData);
-        alert('Flow saved to console! (Backend integration pending)');
+        const csvRows = [];
+        edges.forEach(edge => {
+            const sourceNode = nodes.find(n => n.id === edge.source);
+            const targetNode = nodes.find(n => n.id === edge.target);
+
+            if (sourceNode && targetNode) {
+                const question = sourceNode.data.label;
+                const answer = targetNode.data.label;
+                if (question || answer) {
+                    csvRows.push({ Questions: question, Answers: answer });
+                }
+            }
+        });
+
+        if (onSave) {
+            onSave(csvRows);
+        }
     };
 
-    const addNode = () => {
-        const newNode = {
-            id: (nodes.length + 1).toString(),
-            data: { label: `New Node ${nodes.length + 1}` },
-            position: { x: Math.random() * 400, y: Math.random() * 400 },
-        };
-        setNodes((nds) => nds.concat(newNode));
-    };
+    const addFAQPair = () => {
+        const nextIndex = Math.floor(nodes.length / 2);
+        const { nodes: pNodes, edges: pEdges } = createPair(nextIndex + Date.now());
+        setNodes((nds) => nds.concat(pNodes));
+        setEdges((eds) => eds.concat(pEdges));
 
-    const handleDownloadTemplate = () => {
-        const csvContent = "Questions,Answers\n" +
-            "Hi,Hello! How can I help you today?\n" +
-            "Hello,Greetings! What can 1 assist you with?\n" +
-            "What is FAQSense?,FAQSense is an AI-powered FAQ management and chatbot platform.\n";
-
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.setAttribute("href", url);
-        link.setAttribute("download", "faq_template.csv");
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        // Slightly delay fitView to allow nodes to be added to DOM
+        setTimeout(() => fitView({ duration: 800 }), 100);
     };
 
     return (
         <div className="flow-editor-wrapper">
             <div className="flow-toolbar">
-                <button onClick={addNode}>Add Node</button>
-                <button className="template-btn" onClick={handleDownloadTemplate}>Download FAQ Template</button>
-                <div className="upload-container">
-                    <button className="upload-btn">Upload FAQs</button>
-                    <div className="info-tooltip">
-                        <span className="tooltip-icon">?</span>
-                        <div className="tooltip-content">Supports CSV and Excel files</div>
+                <div className="toolbar-left">
+                    <button className="add-btn" onClick={addFAQPair}>
+                        <span>+</span> Add FAQ Pair
+                    </button>
+                    <div className="flow-stats">
+                        {Math.floor(nodes.length / 2)} FAQ Pairs
                     </div>
                 </div>
-                <button className="save-btn" onClick={handleSave}>Save Flow</button>
+                <div className="toolbar-right">
+                    <button className="clear-btn" onClick={() => { setNodes([]); setEdges([]); }}>Clear All</button>
+                    <button className="save-btn" onClick={handleSave}>Apply & Save changes</button>
+                </div>
             </div>
-            <div className="flow-container">
+            <div className="flow-container" style={{ height: '600px', width: '100%', background: '#fafbfc' }}>
                 <ReactFlow
                     nodes={nodes}
                     edges={edges}
+                    nodeTypes={nodeTypes}
                     onNodesChange={onNodesChange}
                     onEdgesChange={onEdgesChange}
                     onConnect={onConnect}
+                    onInit={setRfInstance}
                     fitView
+                    snapToGrid
+                    snapGrid={[15, 15]}
                 >
-                    <Background />
+                    <Background color="#e2e8f0" gap={20} />
                     <Controls />
+                    <MiniMap
+                        nodeColor={(n) => n.type === 'question' ? '#6366f1' : '#10b981'}
+                        maskColor="rgba(241, 245, 249, 0.6)"
+                    />
                 </ReactFlow>
+            </div>
+            <div className="flow-footer">
+                <p>Drag nodes to organize. Double click text to edit. Draw lines between handles to connect Q & A.</p>
             </div>
         </div>
     );
 };
+
+const FlowEditor = (props) => (
+    <ReactFlowProvider>
+        <FlowEditorContent {...props} />
+    </ReactFlowProvider>
+);
 
 export default FlowEditor;
