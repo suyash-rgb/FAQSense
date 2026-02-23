@@ -60,8 +60,12 @@ def get_conversation(db: Session, conversation_id: str) -> Optional[Conversation
 def get_conversation_history(db: Session, conversation_id: str) -> List[Message]:
     return db.query(Message).filter(Message.conversation_id == conversation_id).order_by(Message.created_at.asc()).all()
 
-def get_user_conversations(db: Session, user_id: str) -> List[Conversation]:
-    # This might be needed for the dashboard later
+def get_user_conversations(db: Session, user_id: str, chatbot_id: Optional[int] = None) -> List[Conversation]:
     # Joining with Chatbot to filter by user_id
     from app.models.platform import Chatbot
-    return db.query(Conversation).join(Chatbot).filter(Chatbot.user_id == user_id).all()
+    query = db.query(Conversation).join(Chatbot).filter(Chatbot.user_id == user_id)
+    
+    if chatbot_id:
+        query = query.filter(Conversation.chatbot_id == chatbot_id)
+        
+    return query.all()
