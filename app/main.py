@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi_sqlalchemy import DBSessionMiddleware, db
 from sqlalchemy import create_engine
 from app.api.endpoints import faq, webhooks, chatbots, conversations
@@ -10,6 +11,15 @@ engine = create_engine(settings.DATABASE_URL)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="FAQSense Backend")
+
+# Add CORS Middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 # Add DB Middleware
 app.add_middleware(DBSessionMiddleware, db_url=settings.DATABASE_URL)
