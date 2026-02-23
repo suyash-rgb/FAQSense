@@ -1,6 +1,7 @@
 1. Security & Verification
 Webhook Signature Verification: The webhooks/clerk endpoint exists, but we need to implement signature verification using the svix library to ensure only Clerk can call it.
-Environment Setup: provide real MySQL credentials in a .env file and run python init_db.py to verify the table creation.
+3. [TEMP] Remove Lazy Onboarding: The `get_current_user_id` in `chatbots.py` currently auto-creates users to facilitate frontend testing. This MUST be removed once the Clerk webhook is fully operational.
+4. Environment Setup: provide real MySQL credentials in a .env file and run python init_db.py to verify the table creation.
 
 2. Chatbot Management (CRUD)
 Dynamic FAQ Storage: Currently, the system uses a single 
