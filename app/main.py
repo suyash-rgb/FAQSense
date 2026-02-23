@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_sqlalchemy import DBSessionMiddleware, db
 from sqlalchemy import create_engine
@@ -11,6 +12,9 @@ engine = create_engine(settings.DATABASE_URL)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="FAQSense Backend")
+
+# Mount static files
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Add CORS Middleware
 app.add_middleware(
