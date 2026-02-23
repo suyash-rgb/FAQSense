@@ -11,6 +11,18 @@ router = APIRouter()
 # Helper to get user_id from header for dev purposes
 async def get_current_user_id(x_user_id: str = Header(...)):
     # In a real app, this would verify a JWT token
+    from app.models.platform import User
+    query = db.session.query(User).filter(User.clerk_id == x_user_id)
+    user = query.first()
+    if not user:
+        print(f"Lazy-onboarding user: {x_user_id}")
+        user = User(
+            clerk_id=x_user_id, 
+            email=f"{x_user_id}@example.com", 
+            full_name="User " + x_user_id[:8]
+        )
+        db.session.add(user)
+        db.session.commit()
     return x_user_id
 
 @router.post("/", response_model=ChatbotResponse, status_code=201)
@@ -21,6 +33,9 @@ async def create_new_chatbot(
     try:
         return chatbot_service.create_chatbot(db.session, chatbot_in, user_id)
     except Exception as e:
+        print(f"ERROR: Chatbot creation failed for user_id={user_id}: {str(e)}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.get("/", response_model=List[ChatbotResponse])
