@@ -18,7 +18,7 @@ function App() {
   const isWidget = new URLSearchParams(window.location.search).get('mode') === 'widget';
 
   if (isWidget) {
-    return <ChatWindow forceOpen={true} height="100%" />;
+    return <ChatWindow forceOpen={true} height="100%" isWidget={true} />;
   }
 
   return (

@@ -25,12 +25,15 @@ const Dashboard = () => {
     }, [isLoaded, user]);
 
     const fetchBots = async () => {
+        console.log("Fetching chatbots for user:", user.id);
         try {
             const data = await getChatbots(user.id);
+            console.log("Chatbots fetched:", data);
             setChatbots(data);
         } catch (error) {
             console.error("Error fetching bots:", error);
         } finally {
+            console.log("Setting loading to false");
             setLoading(false);
         }
     };
@@ -97,17 +100,18 @@ const Dashboard = () => {
                         }}
                     />
                 ))}
-                <div className="create-bot-card">
-                    <form onSubmit={handleCreateBot}>
-                        <input
-                            type="text"
-                            placeholder="New bot name..."
-                            value={newBotName}
-                            onChange={(e) => setNewBotName(e.target.value)}
-                        />
-                        <button type="submit">Create New Bot</button>
-                    </form>
-                </div>
+            </div>
+
+            <div className="create-bot-card">
+                <form onSubmit={handleCreateBot}>
+                    <input
+                        type="text"
+                        placeholder="Name your new AI assistant..."
+                        value={newBotName}
+                        onChange={(e) => setNewBotName(e.target.value)}
+                    />
+                    <button type="submit">✨ Create New Bot</button>
+                </form>
             </div>
         </div>
     );

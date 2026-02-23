@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { getTopFaqs, askQuestion, submitEnquiry } from '../../utils/api';
 import './ChatWindow.css';
 
-const ChatWindow = ({ initialBotId, height = '520px', forceOpen = false }) => {
+const ChatWindow = ({ initialBotId, height = '520px', forceOpen = false, isWidget = false }) => {
     const chatbotId = initialBotId || new URLSearchParams(window.location.search).get('id') || 1;
     const [messages, setMessages] = useState([
         { text: "Hi there! How can I help you today?", sender: 'bot' }
@@ -87,7 +87,7 @@ const ChatWindow = ({ initialBotId, height = '520px', forceOpen = false }) => {
     };
 
     return (
-        <div className={`chatbot-container ${isOpen ? 'open' : ''} ${forceOpen ? 'is-widget' : ''}`}>
+        <div className={`chatbot-container ${isOpen ? 'open' : ''} ${isWidget ? 'is-widget' : ''}`}>
             {!isOpen && (
                 <button className="chat-toggle" onClick={() => setIsOpen(true)}>
                     <span className="chat-icon">💬</span>

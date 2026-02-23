@@ -52,8 +52,6 @@
     flex-direction: column;
     overflow: hidden;
     animation: slideUp 0.4s ease-out;
-    margin: 0 auto;
-    /* Added for centering in preview */
 }
 
 /* Glassmorphism */
@@ -114,6 +112,21 @@
     flex-direction: column;
     gap: 15px;
     background: transparent;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(99, 102, 241, 0.2) transparent;
+}
+
+.chat-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background-color: rgba(99, 102, 241, 0.2);
+    border-radius: 10px;
 }
 
 .message {

@@ -61,6 +61,15 @@ export const updateEnquiry = async (userId, chatbotId, enquiryId, data) => {
     return response.data;
 };
 
+export const getConversations = async (userId, chatbotId = null) => {
+    const params = chatbotId ? { chatbot_id: chatbotId } : {};
+    const response = await api.get('/conversations/', {
+        headers: getHeaders(userId),
+        params
+    });
+    return response.data;
+};
+
 export const getTopFaqs = async (chatbotId) => {
     const response = await api.get(`/chatbots/${chatbotId}/top-faqs`);
     return response.data;
