@@ -23,6 +23,20 @@
     transform: scale(1.1);
 }
 
+.chatbot-container.is-widget {
+    width: 100%;
+    height: 100vh;
+    align-items: stretch;
+}
+
+.is-widget .chat-window {
+    width: 100%;
+    height: 100% !important;
+    border-radius: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
 .chat-icon {
     font-size: 28px;
     color: white;

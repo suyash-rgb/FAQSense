@@ -50,7 +50,6 @@ const ChatWindow = ({ initialBotId, height = '520px', forceOpen = false }) => {
         setMessages(prev => [...prev, userMsg]);
         setInput('');
         setIsTyping(true);
-
         try {
             const response = await askQuestion(chatbotId, text, conversationId);
             setIsTyping(false);
@@ -63,8 +62,12 @@ const ChatWindow = ({ initialBotId, height = '520px', forceOpen = false }) => {
                 setShowEnquiryForm(true);
             }
         } catch (error) {
+            console.error("Chat Error:", error);
             setIsTyping(false);
-            setMessages(prev => [...prev, { text: "Sorry, I'm having trouble connecting.", sender: 'bot' }]);
+            const errorMsg = error.response ?
+                `Error ${error.response.status}: ${error.response.data?.detail || 'Server error'}` :
+                "Connection failed. Please check if your backend is running.";
+            setMessages(prev => [...prev, { text: `Sorry, I'm having trouble connecting. (${errorMsg})`, sender: 'bot' }]);
         }
     };
 
@@ -84,7 +87,7 @@ const ChatWindow = ({ initialBotId, height = '520px', forceOpen = false }) => {
     };
 
     return (
-        <div className={`chatbot-container ${isOpen ? 'open' : ''}`}>
+        <div className={`chatbot-container ${isOpen ? 'open' : ''} ${forceOpen ? 'is-widget' : ''}`}>
             {!isOpen && (
                 <button className="chat-toggle" onClick={() => setIsOpen(true)}>
                     <span className="chat-icon">💬</span>
