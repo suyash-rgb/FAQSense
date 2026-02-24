@@ -112,7 +112,17 @@ const FlowEditorContent = ({ initialData, onSave }) => {
         [setEdges]
     );
     const onConnect = useCallback(
-        (connection) => setEdges((eds) => addEdge({ ...connection, animated: true, style: { stroke: '#6366f1', strokeWidth: 2 } }, eds)),
+        (connection) => {
+            setEdges((eds) => {
+                // Each question can only have ONE unique answer. 
+                // If user connects it to another answer, we replace the previous edge.
+                const filteredEdges = eds.filter(e => e.source !== connection.source);
+                return addEdge(
+                    { ...connection, animated: true, style: { stroke: '#6366f1', strokeWidth: 2 } },
+                    filteredEdges
+                );
+            });
+        },
         [setEdges]
     );
 
@@ -146,12 +156,32 @@ const FlowEditorContent = ({ initialData, onSave }) => {
         setTimeout(() => fitView({ duration: 800 }), 100);
     };
 
+    const addNode = (type) => {
+        const id = `${type.charAt(0)}-${Date.now()}`;
+        const newNode = {
+            id,
+            type,
+            data: {
+                label: '',
+                onChange: (val) => onNodeDataChange(id, val)
+            },
+            position: { x: Math.random() * 200 + 50, y: Math.random() * 200 + 50 },
+        };
+        setNodes((nds) => nds.concat(newNode));
+    };
+
     return (
         <div className="flow-editor-wrapper">
             <div className="flow-toolbar">
                 <div className="toolbar-left">
                     <button className="add-btn" onClick={addFAQPair}>
                         <span>+</span> Add FAQ Pair
+                    </button>
+                    <button className="add-node-btn question" onClick={() => addNode('question')}>
+                        <span>+</span> Question
+                    </button>
+                    <button className="add-node-btn answer" onClick={() => addNode('answer')}>
+                        <span>+</span> Answer
                     </button>
                     <div className="flow-stats">
                         {Math.floor(nodes.length / 2)} FAQ Pairs
@@ -184,7 +214,7 @@ const FlowEditorContent = ({ initialData, onSave }) => {
                 </ReactFlow>
             </div>
             <div className="flow-footer">
-                <p>Drag nodes to organize. Double click text to edit. Draw lines between handles to connect Q & A.</p>
+                <p>Drag nodes to organize. Double click text to edit. <strong>Rule:</strong> Each question maps to 1 answer, but an answer can have multiple paraphrased questions pointing to it.</p>
             </div>
         </div>
     );
