@@ -25,9 +25,9 @@ const Navbar = () => (
                 </SignUpButton>
             </SignedOut>
             <SignedIn>
+                <Link to="/dashboard" className="nav-btn">Launch Dashboard</Link>
                 <UserButton afterSignOutUrl="/" />
             </SignedIn>
-            <Link to="/dashboard" className="nav-btn">Launch Dashboard</Link>
         </div>
     </nav>
 );
