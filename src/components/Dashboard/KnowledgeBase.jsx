@@ -10,10 +10,13 @@ const KnowledgeBase = ({ chatbot, userId, onUploadSuccess }) => {
     const [csvData, setCsvData] = useState([]);
 
     useEffect(() => {
+        let active = true;
         const fetchData = async () => {
             try {
                 const data = await getChatbotData(userId, chatbot.id);
-                setCsvData(data);
+                if (active) {
+                    setCsvData(data);
+                }
             } catch (error) {
                 console.error("Error fetching bot data:", error);
             }
@@ -21,6 +24,9 @@ const KnowledgeBase = ({ chatbot, userId, onUploadSuccess }) => {
         if (chatbot?.id) {
             fetchData();
         }
+        return () => {
+            active = false;
+        };
     }, [chatbot?.id, userId]);
 
     const handleFileChange = (e) => {
@@ -49,7 +55,7 @@ const KnowledgeBase = ({ chatbot, userId, onUploadSuccess }) => {
 
         if (customData) {
             const csvContent = "Question,Answer\n" + customData.map(row => `"${row.Question}","${row.Answer}"`).join('\n');
-            fileToUpload = new File([csvContent], 'knowledge_base.csv', { type: 'text/csv' });
+            fileToUpload = new File([csvContent], 'knowledge_base.csv', { type: 'text/csv' }); //?
         }
 
         if (!fileToUpload) {

@@ -6,21 +6,30 @@ const ChatbotAnalytics = ({ chatbot }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        let active = true;
+        const fetchAnalytics = async () => {
+            setLoading(true);
+            try {
+                const data = await getTopFaqs(chatbot.id);
+                if (active) {
+                    setTopFaqs(data.slice(0, 5));
+                }
+            } catch (error) {
+                console.error("Error fetching analytics:", error);
+            } finally {
+                if (active) {
+                    setLoading(false);
+                }
+            }
+        };
+
         fetchAnalytics();
+
+        return () => {
+            active = false;
+        };
     }, [chatbot.id]);
 
-    const fetchAnalytics = async () => {
-        setLoading(true);
-        try {
-            const data = await getTopFaqs(chatbot.id);
-            // Assuming data is an array of { original_question: string, hits: number }
-            setTopFaqs(data.slice(0, 5));
-        } catch (error) {
-            console.error("Error fetching analytics:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     if (loading) return <div className="loading-small">Fetching analytics...</div>;
 

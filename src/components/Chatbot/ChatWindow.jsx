@@ -26,6 +26,7 @@ const ChatWindow = ({ initialBotId, height = '520px', forceOpen = false, isWidge
     }, [messages, isTyping]);
 
     useEffect(() => {
+        let active = true;
         // Reset messages and session when bot changes
         setMessages([{ text: "Hi there! How can I help you today?", sender: 'bot' }]);
         setConversationId(`conv_${Math.random().toString(36).substr(2, 9)}`);
@@ -35,12 +36,18 @@ const ChatWindow = ({ initialBotId, height = '520px', forceOpen = false, isWidge
         const fetchSuggestions = async () => {
             try {
                 const faqs = await getTopFaqs(chatbotId);
-                setTopFaqs(faqs.slice(0, 3));
+                if (active) {
+                    setTopFaqs(faqs.slice(0, 3));
+                }
             } catch (error) {
                 console.error("Error fetching suggestions:", error);
             }
         };
         fetchSuggestions();
+
+        return () => {
+            active = false;
+        };
     }, [chatbotId]);
 
     const handleSend = async (text) => {

@@ -19,24 +19,32 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        let active = true;
         if (isLoaded && user) {
+            const fetchBots = async () => {
+                console.log("Fetching chatbots for user:", user.id);
+                try {
+                    const data = await getChatbots(user.id);
+                    if (active) {
+                        console.log("Chatbots fetched:", data);
+                        setChatbots(data);
+                    }
+                } catch (error) {
+                    console.error("Error fetching bots:", error);
+                } finally {
+                    if (active) {
+                        console.log("Setting loading to false");
+                        setLoading(false);
+                    }
+                }
+            };
             fetchBots();
         }
+        return () => {
+            active = false;
+        };
     }, [isLoaded, user]);
 
-    const fetchBots = async () => {
-        console.log("Fetching chatbots for user:", user.id);
-        try {
-            const data = await getChatbots(user.id);
-            console.log("Chatbots fetched:", data);
-            setChatbots(data);
-        } catch (error) {
-            console.error("Error fetching bots:", error);
-        } finally {
-            console.log("Setting loading to false");
-            setLoading(false);
-        }
-    };
 
     const handleCreateBot = async (e) => {
         e.preventDefault();

@@ -9,18 +9,36 @@ const EnquiryInbox = ({ chatbot, userId }) => {
     const [updating, setUpdating] = useState(false);
 
     useEffect(() => {
-        fetchEnquiries();
-    }, [chatbot.id]);
+        let active = true;
+        const fetchEnquiries = async () => {
+            setLoading(true);
+            try {
+                const data = await getEnquiries(userId, chatbot.id);
+                if (active) {
+                    setEnquiries(data);
+                }
+            } catch (error) {
+                console.error("Error fetching enquiries:", error);
+            } finally {
+                if (active) {
+                    setLoading(false);
+                }
+            }
+        };
 
-    const fetchEnquiries = async () => {
-        setLoading(true);
+        fetchEnquiries();
+        return () => {
+            active = false;
+        };
+    }, [chatbot.id, userId]);
+
+    // We still need a way to refresh after update, so we'll define a simple trigger
+    const refreshEnquiries = async () => {
         try {
             const data = await getEnquiries(userId, chatbot.id);
             setEnquiries(data);
         } catch (error) {
-            console.error("Error fetching enquiries:", error);
-        } finally {
-            setLoading(false);
+            console.error("Error refreshing enquiries:", error);
         }
     };
 
@@ -32,7 +50,7 @@ const EnquiryInbox = ({ chatbot, userId }) => {
                 admin_notes: adminNotes
             });
             setSelectedEnquiry(null);
-            fetchEnquiries();
+            refreshEnquiries();
         } catch (error) {
             console.error("Error updating enquiry:", error);
         } finally {
