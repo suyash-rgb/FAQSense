@@ -75,6 +75,13 @@ export const getTopFaqs = async (chatbotId) => {
     return response.data;
 };
 
+export const getChatbotStats = async (userId, chatbotId) => {
+    const response = await api.get(`/chatbots/${chatbotId}/stats`, {
+        headers: getHeaders(userId)
+    });
+    return response.data;
+};
+
 export const askQuestion = async (chatbotId, query, conversationId = null) => {
     const response = await api.post(`/chatbots/${chatbotId}/ask`, {
         question: query, // Backend expects 'question' based on faq.py/chatbots.py

@@ -82,7 +82,7 @@ const Dashboard = () => {
             <section className="dashboard-content">
                 {activeTab === 'kb' && <KnowledgeBase chatbot={selectedBot} userId={user.id} onUploadSuccess={setActiveTab} />}
                 {activeTab === 'enquiries' && <EnquiryInbox chatbot={selectedBot} userId={user.id} />}
-                {activeTab === 'analytics' && <ChatbotAnalytics chatbot={selectedBot} />}
+                {activeTab === 'analytics' && <ChatbotAnalytics chatbot={selectedBot} userId={user.id} />}
                 {activeTab === 'preview' && <ChatbotPreview chatbot={selectedBot} />}
                 {activeTab === 'conversations' && <AllConversations chatbot={selectedBot} />}
                 {activeTab === 'settings' && <div className="tab-placeholder">Chatbot Settings Coming Soon</div>}
