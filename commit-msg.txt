@@ -1,0 +1,15 @@
+feat: implement backend analytics engine and schemas
+
+Commit Summary:
+
+Analytics Aggregation Engine: Implemented 
+get_chatbot_stats
+ in the service layer to calculate real-time KPIs including total FAQ hits, conversation volume, and enquiry resolution rates.
+Structured Data Schemas: Created new Pydantic models in 
+app/schemas/analytics.py
+ (
+ChatbotStatsResponse
+ and 
+FAQAnalyticResponse
+) to ensure consistent and typed data exchange between the API and the dashboard.
+Secure Analytics API: Added a protected GET /chatbots/{id}/stats endpoint with ownership verification and refined the service layer to support rich data visualizations while maintaining backward compatibility for chat suggestions.

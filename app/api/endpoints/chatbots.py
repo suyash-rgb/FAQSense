@@ -4,6 +4,7 @@ from app.schemas.chatbot import ChatbotCreate, ChatbotResponse
 from app.schemas.faq import FAQAskRequest, FAQAskResponse
 from app.schemas.enquiry import EnquiryCreate, EnquiryUpdate, EnquiryResponse
 from app.services import chatbot_service
+from app.schemas.analytics import ChatbotStatsResponse
 from typing import List
 
 router = APIRouter()
@@ -206,3 +207,15 @@ async def get_bot_top_faqs(
         raise HTTPException(status_code=404, detail="Chatbot not found")
     
     return chatbot_service.get_top_faqs(db.session, chatbot_id, limit)
+
+@router.get("/{chatbot_id}/stats", response_model=ChatbotStatsResponse)
+async def get_chatbot_analytics(
+    chatbot_id: int,
+    user_id: str = Depends(get_current_user_id)
+):
+    # Verify ownership
+    chatbot = chatbot_service.get_chatbot(db.session, chatbot_id)
+    if not chatbot or chatbot.user_id != user_id:
+        raise HTTPException(status_code=403, detail="Not authorized to access these stats")
+    
+    return chatbot_service.get_chatbot_stats(db.session, chatbot_id)

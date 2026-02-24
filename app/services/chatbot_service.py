@@ -95,9 +95,17 @@ def get_answer_from_chatbot(chatbot: Chatbot, question: str, db: Session = None)
 
 def get_top_faqs(db: Session, chatbot_id: int, limit: int = 5) -> List[str]:
     """
-    Orchestrates retrieving top FAQs via analytics service.
+    Orchestrates retrieving top FAQs via analytics service for suggestions.
+    Returns list of strings.
     """
-    return analytics_service.get_top_faqs(db, chatbot_id, limit)
+    results = analytics_service.get_top_faqs(db, chatbot_id, limit)
+    return [r.original_question for r in results]
+
+def get_chatbot_stats(db: Session, chatbot_id: int):
+    """
+    Get detailed analytics for the dashboard.
+    """
+    return analytics_service.get_chatbot_stats(db, chatbot_id)
 
 def create_enquiry(db: Session, chatbot_id: int, enquiry_in: EnquiryCreate) -> Enquiry:
     """
