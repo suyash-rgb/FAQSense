@@ -2,6 +2,7 @@ from fastapi import APIRouter, Header, Request, HTTPException
 from fastapi_sqlalchemy import db
 from app.models.platform import User
 from app.core.config import settings
+from svix.webhooks import Webhook, WebhookVerificationError
 import json
 
 router = APIRouter()
@@ -15,11 +16,27 @@ async def clerk_webhook(
 ):
     # Retrieve the raw body
     body = await request.body()
-    payload = json.loads(body)
+    payload_str = body.decode("utf-8")
     
-    # [TODO] Implement signature verification using svix_id, svix_signature, and svix_timestamp
-    # and settings.CLERK_WEBHOOK_SECRET
-    
+    headers = {
+        "svix-id": svix_id,
+        "svix-signature": svix_signature,
+        "svix-timestamp": svix_timestamp,
+    }
+
+    if not all([svix_id, svix_signature, svix_timestamp]):
+        raise HTTPException(status_code=400, detail="Missing svix headers")
+
+    if not settings.CLERK_WEBHOOK_SECRET:
+        print("WARNING: CLERK_WEBHOOK_SECRET not set. Skipping verification (Insecure!)")
+    else:
+        try:
+            wh = Webhook(settings.CLERK_WEBHOOK_SECRET)
+            wh.verify(payload_str, headers)
+        except WebhookVerificationError as e:
+            raise HTTPException(status_code=400, detail="Invalid signature")
+
+    payload = json.loads(payload_str)
     event_type = payload.get("type")
     data = payload.get("data")
     

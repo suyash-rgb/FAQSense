@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Settings:
+    PROJECT_ROOT: str = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     DATABASE_URL: str = os.getenv("DATABASE_URL", "mysql+pymysql://root:root@localhost/faqsense_db")
     CLERK_WEBHOOK_SECRET: str = os.getenv("CLERK_WEBHOOK_SECRET", "")
     FUZZY_MATCH_THRESHOLD: float = float(os.getenv("FUZZY_MATCH_THRESHOLD", "80.0"))
@@ -11,5 +12,9 @@ class Settings:
     MIN_KEYWORD_OVERLAP: int = int(os.getenv("MIN_KEYWORD_OVERLAP", "1"))
     AMBIGUITY_THRESHOLD: float = float(os.getenv("AMBIGUITY_THRESHOLD", "0.15"))
     CONFIDENCE_THRESHOLD: float = float(os.getenv("CONFIDENCE_THRESHOLD", "0.60"))
+    
+    @property
+    def MODEL_PATH(self) -> str:
+        return os.path.join(self.PROJECT_ROOT, "models", "all-MiniLM-L6-v2")
 
 settings = Settings()

@@ -70,5 +70,18 @@ def get_chatbot_stats(db: Session, chatbot_id: int):
         "total_enquiries": total_enquiries,
         "total_conversations": total_conversations,
         "resolved_enquiries": resolved_enquiries,
+        "total_chatbot_clicks": db.query(Chatbot).filter(Chatbot.id == chatbot_id).first().click_count if db.query(Chatbot).filter(Chatbot.id == chatbot_id).first() else 0,
         "top_faqs": top_faqs
     }
+
+def increment_chatbot_click(db: Session, chatbot_id: int):
+    """
+    Increment the click count for a chatbot.
+    """
+    from app.models.platform import Chatbot
+    chatbot = db.query(Chatbot).filter(Chatbot.id == chatbot_id).first()
+    if chatbot:
+        chatbot.click_count += 1
+        db.commit()
+        return True
+    return False

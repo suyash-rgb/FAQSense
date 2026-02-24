@@ -1,3 +1,9 @@
+# Documentation and Diagrams
+Initial ER.png
+QueryLifeCycle.docx
+
+# AI Models
+models/
 # Python
 __pycache__/
 *.py[cod]

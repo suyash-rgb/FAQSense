@@ -7,7 +7,7 @@ from sentence_transformers import SentenceTransformer, util
 from app.core.config import settings
 
 # Load a lightweight pre-trained model for semantic search
-model = SentenceTransformer('all-MiniLM-L6-v2')
+model = SentenceTransformer(settings.MODEL_PATH)
 
 # Simple in-memory cache for FAQ embeddings to avoid re-encoding on every request
 EMBEDDING_CACHE = {} 

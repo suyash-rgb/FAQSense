@@ -34,6 +34,7 @@ class Chatbot(Base):
     user_id = Column(String(255), ForeignKey("users.clerk_id"))
     name = Column(String(255))
     csv_file_path = Column(String(255))
+    click_count = Column(Integer, default=0)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     

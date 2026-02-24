@@ -3,7 +3,7 @@ from fastapi_sqlalchemy import db
 from app.schemas.chatbot import ChatbotCreate, ChatbotResponse
 from app.schemas.faq import FAQAskRequest, FAQAskResponse
 from app.schemas.enquiry import EnquiryCreate, EnquiryUpdate, EnquiryResponse
-from app.services import chatbot_service
+from app.services import chatbot_service, analytics_service
 from app.schemas.analytics import ChatbotStatsResponse
 from typing import List
 
@@ -127,6 +127,16 @@ async def ask_bot(
         return {"answer": fallback_msg}
     
     return {"answer": answer}
+
+@router.post("/{chatbot_id}/click")
+async def register_chatbot_click(
+    chatbot_id: int
+):
+    # Public endpoint to track when someone clicks the toggle button
+    success = analytics_service.increment_chatbot_click(db.session, chatbot_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Chatbot not found")
+    return {"status": "success", "message": "Click recorded"}
 
 @router.get("/{chatbot_id}", response_model=ChatbotResponse)
 async def get_chatbot(
