@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { getTopFaqs, askQuestion, submitEnquiry } from '../../utils/api';
+import { getTopFaqs, askQuestion, submitEnquiry, recordChatbotClick } from '../../utils/api';
 import './ChatWindow.css';
 
 const ChatWindow = ({ initialBotId, height = '520px', forceOpen = false, isWidget = false }) => {
@@ -19,6 +19,14 @@ const ChatWindow = ({ initialBotId, height = '520px', forceOpen = false, isWidge
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    const handleToggle = () => {
+        if (!isOpen) {
+            // Record click when opening
+            recordChatbotClick(chatbotId).catch(err => console.error("Error recording click:", err));
+        }
+        setIsOpen(!isOpen);
     };
 
     useEffect(() => {
@@ -96,7 +104,7 @@ const ChatWindow = ({ initialBotId, height = '520px', forceOpen = false, isWidge
     return (
         <div className={`chatbot-container ${isOpen ? 'open' : ''} ${isWidget ? 'is-widget' : ''}`}>
             {!isOpen && (
-                <button className="chat-toggle" onClick={() => setIsOpen(true)}>
+                <button className="chat-toggle" onClick={handleToggle}>
                     <span className="chat-icon">💬</span>
                 </button>
             )}
@@ -105,7 +113,7 @@ const ChatWindow = ({ initialBotId, height = '520px', forceOpen = false, isWidge
                 <div className="chat-window glass" style={{ height }}>
                     <div className="chat-header">
                         <h3>FAQSense Chat</h3>
-                        <button className="close-btn" onClick={() => setIsOpen(false)}>×</button>
+                        <button className="close-btn" onClick={handleToggle}>×</button>
                     </div>
 
                     <div className="chat-messages">

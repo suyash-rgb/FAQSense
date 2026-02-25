@@ -95,6 +95,11 @@ export const submitEnquiry = async (chatbotId, enquiryData) => {
     return response.data;
 };
 
+export const recordChatbotClick = async (chatbotId) => {
+    const response = await api.post(`/chatbots/${chatbotId}/click`);
+    return response.data;
+};
+
 // Legacy for backward compatibility
 export const sendMessage = async (message) => {
     return { text: `Please use askQuestion for real interaction. You said: ${message}` };

@@ -40,7 +40,7 @@ const ChatbotAnalytics = ({ chatbot, userId }) => {
 
     if (!stats) return <div className="empty-state">Unable to load analytics data.</div>;
 
-    const { total_faq_hits, total_enquiries, total_conversations, resolved_enquiries, top_faqs } = stats;
+    const { total_faq_hits, total_enquiries, total_conversations, resolved_enquiries, total_chatbot_clicks, top_faqs } = stats;
 
     return (
         <div className="analytics-container">
@@ -86,7 +86,7 @@ const ChatbotAnalytics = ({ chatbot, userId }) => {
                     <div className="stat-icon clicks">🖱️</div>
                     <div className="stat-info">
                         <span className="stat-label">Click Throughs</span>
-                        <span className="stat-value">1,248</span>
+                        <span className="stat-value">{total_chatbot_clicks.toLocaleString()}</span>
                     </div>
                 </div>
             </div>
