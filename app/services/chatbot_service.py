@@ -59,8 +59,20 @@ def save_chatbot_csv(db: Session, chatbot_id: int, file_content: str):
     file_path = os.path.join(DATA_DIR, f"chatbot_{chatbot_id}.csv")
     validate_csv_content(file_content)
     
-    df = pd.read_csv(StringIO(file_content))
-    df.to_csv(file_path, index=False)
+    # Atomic Swap Implementation
+    import tempfile
+    fd, temp_path = tempfile.mkstemp(dir=DATA_DIR)
+    try:
+        with os.fdopen(fd, 'w', encoding='utf-8') as tmp:
+            df = pd.read_csv(StringIO(file_content))
+            df.to_csv(tmp, index=False)
+        
+        # Replace target with temp file (Atomic on most OSs)
+        os.replace(temp_path, file_path)
+    except Exception as e:
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+        raise e
     
     db_chatbot = get_chatbot(db, chatbot_id)
     if db_chatbot:

@@ -12,6 +12,24 @@ model = SentenceTransformer(settings.MODEL_PATH)
 # Simple in-memory cache for FAQ embeddings to avoid re-encoding on every request
 EMBEDDING_CACHE = {} 
 
+# Reactive Cache for CSV Data
+# Structure: { chatbot_id: {"df": pd.DataFrame, "mtime": float} }
+CSV_DATA_CACHE = {}
+
+def get_cached_df(chatbot_id: int, csv_path: str) -> pd.DataFrame:
+    """Retrieve DataFrame from cache or load from disk if modified."""
+    current_mtime = os.path.getmtime(csv_path)
+    cached_entry = CSV_DATA_CACHE.get(chatbot_id)
+
+    if not cached_entry or current_mtime > cached_entry["mtime"]:
+        # Reload DF from disk
+        df = pd.read_csv(csv_path)
+        CSV_DATA_CACHE[chatbot_id] = {
+            "df": df,
+            "mtime": current_mtime
+        }
+    return CSV_DATA_CACHE[chatbot_id]["df"]
+
 # Basic English stop words to ignore during keyword matching
 STOP_WORDS = {
     'i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're", "you've", "you'll", "you'd",
@@ -45,7 +63,7 @@ def find_answer(chatbot_id: int, csv_path: str, question: str) -> Tuple[Optional
     if not os.path.exists(csv_path):
         return None, None
     
-    df = pd.read_csv(csv_path)
+    df = get_cached_df(chatbot_id, csv_path)
     questions = df["Question"].tolist()
     
     # 1. Exact Match
