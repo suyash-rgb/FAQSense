@@ -5,7 +5,15 @@ load_dotenv()
 
 class Settings:
     PROJECT_ROOT: str = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "mysql+pymysql://root:root@localhost/faqsense_db")
+    DATABASE_URL_RAW: str = os.getenv("DATABASE_URL", "mysql+pymysql://root:root@localhost/faqsense_db")
+    
+    @property
+    def DATABASE_URL(self) -> str:
+        # Render provides postgres:// urls, but SQLAlchemy 1.4+ requires postgresql://
+        if self.DATABASE_URL_RAW.startswith("postgres://"):
+            return self.DATABASE_URL_RAW.replace("postgres://", "postgresql://", 1)
+        return self.DATABASE_URL_RAW
+
     CLERK_WEBHOOK_SECRET: str = os.getenv("CLERK_WEBHOOK_SECRET", "")
     FUZZY_MATCH_THRESHOLD: float = float(os.getenv("FUZZY_MATCH_THRESHOLD", "80.0"))
     SEMANTIC_MATCH_THRESHOLD: float = float(os.getenv("SEMANTIC_MATCH_THRESHOLD", "0.35"))
