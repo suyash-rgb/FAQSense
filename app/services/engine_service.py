@@ -3,12 +3,17 @@ import pandas as pd
 import numpy as np
 import re
 from rapidfuzz import process, fuzz
-from fastembed import TextEmbedding
 from app.core.config import settings
+_model = None  # Global variable to hold the model instance
 
-# Load model using FastEmbed
-# Use BAAI/bge-small-en-v1.5 for high performance/low RAM
-model = TextEmbedding(model_name="BAAI/bge-small-en-v1.5")
+def get_model():
+    """Lazily load the FastEmbed model."""
+    global _model
+    if _model is None:
+        print("Initializing FastEmbed model (BAAI/bge-small-en-v1.5)...")
+        from fastembed import TextEmbedding
+        _model = TextEmbedding(model_name="BAAI/bge-small-en-v1.5")
+    return _model
 
 # Simple in-memory cache for FAQ embeddings
 EMBEDDING_CACHE = {} 
@@ -93,6 +98,7 @@ def find_answer(chatbot_id: int, csv_path: str, question: str) -> Tuple[Optional
     
     # 3. Semantic Match
     cache_key = (chatbot_id, tuple(questions))
+    model = get_model()
     
     if cache_key in EMBEDDING_CACHE:
         faq_embeddings = EMBEDDING_CACHE[cache_key]

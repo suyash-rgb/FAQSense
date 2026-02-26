@@ -1,0 +1,9 @@
+fix: optimize backend for render and ram efficiency
+
+- Migrated semantic matching from PyTorch to FastEmbed to reduce RAM from ~800MB to ~150MB.
+- Implemented lazy loading for AI models to prevent blocking server startup.
+- Pruned requirements.txt to remove unnecessary dependencies and added PostgreSQL drivers.
+- Fixed dynamic port binding and database URL protocol issues for Render deployment.
+- Resolved duplicate endpoint definition in chatbots API that caused OpenAPI warnings.
+- Added database connection logic to gracefully handle local vs production environments.
+- Resolved Startup Error

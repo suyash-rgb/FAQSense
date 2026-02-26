@@ -230,13 +230,4 @@ async def get_chatbot_analytics(
     
     return chatbot_service.get_chatbot_stats(db.session, chatbot_id)
 
-@router.post("/{chatbot_id}/click")
-async def register_chatbot_click(
-    chatbot_id: int
-):
-    # Public endpoint to track when someone clicks the toggle button
-    from app.services import analytics_service
-    success = analytics_service.increment_chatbot_click(db.session, chatbot_id)
-    if not success:
-        raise HTTPException(status_code=404, detail="Chatbot not found")
-    return {"status": "success", "message": "Click recorded"}
+
