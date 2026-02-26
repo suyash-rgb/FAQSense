@@ -15,4 +15,5 @@ class ChatbotStatsResponse(BaseModel):
     total_enquiries: int
     total_conversations: int
     resolved_enquiries: int
+    total_chatbot_clicks: int
     top_faqs: List[FAQAnalyticResponse]

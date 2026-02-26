@@ -38,7 +38,7 @@ def get_chatbot_stats(db: Session, chatbot_id: int):
     """
     Get aggregated stats for the chatbot dashboard.
     """
-    from app.models.platform import Enquiry, Conversation, FAQAnalytics
+    from app.models.platform import Enquiry, Conversation, FAQAnalytics, Chatbot
     from sqlalchemy import func
 
     # Total hits across all FAQs
@@ -62,6 +62,10 @@ def get_chatbot_stats(db: Session, chatbot_id: int):
         Conversation.chatbot_id == chatbot_id
     ).count()
 
+    # Total clicks recorded for this chatbot
+    chatbot = db.query(Chatbot).filter(Chatbot.id == chatbot_id).first()
+    total_clicks = chatbot.click_count if chatbot else 0
+
     # Top FAQs
     top_faqs = get_top_faqs(db, chatbot_id, limit=5)
 
@@ -70,7 +74,7 @@ def get_chatbot_stats(db: Session, chatbot_id: int):
         "total_enquiries": total_enquiries,
         "total_conversations": total_conversations,
         "resolved_enquiries": resolved_enquiries,
-        "total_chatbot_clicks": db.query(Chatbot).filter(Chatbot.id == chatbot_id).first().click_count if db.query(Chatbot).filter(Chatbot.id == chatbot_id).first() else 0,
+        "total_chatbot_clicks": total_clicks,
         "top_faqs": top_faqs
     }
 
