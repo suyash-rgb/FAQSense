@@ -1,19 +1,19 @@
 import os
 import pandas as pd
-import torch
+import numpy as np
 import re
 from rapidfuzz import process, fuzz
-from sentence_transformers import SentenceTransformer, util
+from fastembed import TextEmbedding
 from app.core.config import settings
 
-# Load a lightweight pre-trained model for semantic search
-model = SentenceTransformer(settings.MODEL_PATH)
+# Load model using FastEmbed
+# Use BAAI/bge-small-en-v1.5 for high performance/low RAM
+model = TextEmbedding(model_name="BAAI/bge-small-en-v1.5")
 
-# Simple in-memory cache for FAQ embeddings to avoid re-encoding on every request
+# Simple in-memory cache for FAQ embeddings
 EMBEDDING_CACHE = {} 
 
 # Reactive Cache for CSV Data
-# Structure: { chatbot_id: {"df": pd.DataFrame, "mtime": float} }
 CSV_DATA_CACHE = {}
 
 def get_cached_df(chatbot_id: int, csv_path: str) -> pd.DataFrame:
@@ -22,7 +22,6 @@ def get_cached_df(chatbot_id: int, csv_path: str) -> pd.DataFrame:
     cached_entry = CSV_DATA_CACHE.get(chatbot_id)
 
     if not cached_entry or current_mtime > cached_entry["mtime"]:
-        # Reload DF from disk
         df = pd.read_csv(csv_path)
         CSV_DATA_CACHE[chatbot_id] = {
             "df": df,
@@ -30,7 +29,6 @@ def get_cached_df(chatbot_id: int, csv_path: str) -> pd.DataFrame:
         }
     return CSV_DATA_CACHE[chatbot_id]["df"]
 
-# Basic English stop words to ignore during keyword matching
 STOP_WORDS = {
     'i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're", "you've", "you'll", "you'd",
     'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', "she's", 'her', 'hers',
@@ -52,6 +50,10 @@ def get_keywords(text: str) -> set:
     """Extract significant lowercase words from text, ignoring stop words and punctuation."""
     words = re.findall(r'\b\w+\b', text.lower())
     return {w for w in words if w not in STOP_WORDS}
+
+def cosine_similarity(a, b):
+    # FastEmbed returns a generator of numpy arrays
+    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
 from typing import Tuple, Optional
 
@@ -95,27 +97,30 @@ def find_answer(chatbot_id: int, csv_path: str, question: str) -> Tuple[Optional
     if cache_key in EMBEDDING_CACHE:
         faq_embeddings = EMBEDDING_CACHE[cache_key]
     else:
-        faq_embeddings = model.encode(questions, convert_to_tensor=True)
+        # FastEmbed returns a generator, we convert to list/array
+        faq_embeddings = list(model.embed(questions))
         EMBEDDING_CACHE[cache_key] = faq_embeddings
         
-    query_embedding = model.encode(question, convert_to_tensor=True)
-    cos_scores = util.cos_sim(query_embedding, faq_embeddings)[0]
+    query_embedding = list(model.embed([question]))[0]
     
-    top_results = torch.topk(cos_scores, k=min(5, len(questions)))
+    # Calculate scores manually with numpy for speed and to avoid torch
+    cos_scores = [cosine_similarity(query_embedding, fe) for fe in faq_embeddings]
+    
+    # Get top 5 indices
+    top_indices = np.argsort(cos_scores)[-5:][::-1]
     
     query_keywords = get_keywords(question)
     candidates = []
     
-    for i in range(len(top_results.values)):
-        idx = top_results.indices[i].item()
-        score = top_results.values[i].item()
+    for idx in top_indices:
+        score = cos_scores[idx]
         matched_q = questions[idx]
         match_keywords = get_keywords(matched_q)
         overlap = query_keywords.intersection(match_keywords)
         
         candidates.append({
             'index': idx,
-            'score': score,
+            'score': float(score),
             'overlap_count': len(overlap),
             'question': matched_q
         })
