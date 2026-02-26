@@ -5,13 +5,16 @@ import re
 from rapidfuzz import process, fuzz
 from app.core.config import settings
 _model = None  # Global variable to hold the model instance
+from fastembed import TextEmbedding # Moved import to top-level
+
+# Global variable for lazy loading
+_model = None
 
 def get_model():
     """Lazily load the FastEmbed model."""
     global _model
     if _model is None:
         print("Initializing FastEmbed model (BAAI/bge-small-en-v1.5)...")
-        from fastembed import TextEmbedding
         _model = TextEmbedding(model_name="BAAI/bge-small-en-v1.5")
     return _model
 
@@ -104,9 +107,11 @@ def find_answer(chatbot_id: int, csv_path: str, question: str) -> Tuple[Optional
         faq_embeddings = EMBEDDING_CACHE[cache_key]
     else:
         # FastEmbed returns a generator, we convert to list/array
+        model = get_model()
         faq_embeddings = list(model.embed(questions))
         EMBEDDING_CACHE[cache_key] = faq_embeddings
         
+    model = get_model()
     query_embedding = list(model.embed([question]))[0]
     
     # Calculate scores manually with numpy for speed and to avoid torch
