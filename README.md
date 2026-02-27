@@ -20,6 +20,7 @@ In the NLP domain, FAQSense demonstrates that Semantic Search (understanding mea
 ## 🚀 Key Features
 
 - **Visual FAQ Management**: A React-Flow based dashboard that allows users to map questions to answers visually, supporting multiple "Question Variants" for a single answer. <br><br>
+- **Instantly Deployable Chatbots**: FAQSense provides instantly deployable chatbots that can be embedded into your website or platform with minimal effort. Hosting and deployment are streamlined, requiring only lightweight configuration, so organizations can go live quickly without complex setup. <br><br>
 - **Zero-Hallucination Architecture**: Unlike GPT-based bots, FAQSense selects existing answers rather than generating new ones. <br><br>
 - **Hybrid Search Engine**: A 5-phase query lifecycle that ensures accurate delivery: <br>
   1. **Exact Match**: Instant response for perfect string matches.
