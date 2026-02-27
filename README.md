@@ -493,4 +493,4 @@ We welcome contributions!
 
 5. Open a Pull Request.
 
-© 2026 FAQSense Team. All rights reserved.
+
