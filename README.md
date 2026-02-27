@@ -33,21 +33,32 @@ In the NLP domain, FAQSense demonstrates that Semantic Search (understanding mea
 
 ## Screens
 
+**Dashboard**
 ![Dashboard](https://github.com/suyash-rgb/FAQSense/blob/3233964f3ec4c7fcff0678705bf16d8902b30a5b/img/dashboard1.png)
 <br><br>
 ![KnowledgeBase](https://github.com/suyash-rgb/FAQSense/blob/3233964f3ec4c7fcff0678705bf16d8902b30a5b/img/knowledgebasefielupload.png)
 <br><br>
+**Flow Designer Section**
 ![KnowledgeBaseFlowDesigner](https://github.com/suyash-rgb/FAQSense/blob/3233964f3ec4c7fcff0678705bf16d8902b30a5b/img/knowledgebaseflowdesigner.png)
 <br><br>
+**Enquiries Section**
 ![Enquriries](https://github.com/suyash-rgb/FAQSense/blob/3233964f3ec4c7fcff0678705bf16d8902b30a5b/img/enquiries.png)
 <br><br>
 ![Enquiries](https://github.com/suyash-rgb/FAQSense/blob/3233964f3ec4c7fcff0678705bf16d8902b30a5b/img/enquiries2.png)
 <br><br>
+**Analytics Section**
 ![Analytics](https://github.com/suyash-rgb/FAQSense/blob/b40b5f1273e4cfacebdff65b31ad96f01094b9ea/img/analytics.png)
 <br><br>
+**FAQ ChatBot Preview Section**
 ![Preview](https://github.com/suyash-rgb/FAQSense/blob/b40b5f1273e4cfacebdff65b31ad96f01094b9ea/img/preview.png)
 <br><br>
 ![PreviewGoLive](https://github.com/suyash-rgb/FAQSense/blob/b40b5f1273e4cfacebdff65b31ad96f01094b9ea/img/previewgolive.png)
+<br><br>
+**Conversations Section**
+![AllConversections](https://github.com/suyash-rgb/FAQSense/blob/9d765e91b666d2fb211b4ffbb7b36a9349e75402/img/conversations.png)
+<br><br>
+**Settings Section**
+![Settings](https://github.com/suyash-rgb/FAQSense/blob/9d765e91b666d2fb211b4ffbb7b36a9349e75402/img/settings.png)
 
 ## 🛠️ Technology Stack
 
