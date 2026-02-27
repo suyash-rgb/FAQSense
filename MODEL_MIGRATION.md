@@ -66,7 +66,7 @@ We verified the 5-phase lifecycle through comprehensive integration testing:
 **Date of implementation:** February 27, 2026
 
 
-## Query LifeCycle
+## Query LifeCycle / NLU Pipeline
 
 ```mermaid
 graph TD
