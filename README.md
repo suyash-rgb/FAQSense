@@ -2,6 +2,8 @@
 
 FAQSense is an AI-powered high-performance, multi-tenant chatbot engine designed to provide instant, reliable customer support. By leveraging a Retrieval-Augmented Matcher (RAM) architecture. It allows multiple organizations to upload their proprietary FAQ data and instantly deploy customized, context-aware chatbots that are guaranteed to remain faithful to the source material. It features a visual flow editor for managing FAQ data and a robust hybrid search engine for answering queries.
 
+![Landing Page](https://github.com/suyash-rgb/FAQSense/blob/2df83196cbbe716b5102864e0e78bc6760a9f5f8/img/landingpage1.png)
+
 ## About the Application
 
 ### Background & Motivation
