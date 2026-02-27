@@ -383,7 +383,21 @@ The BGE model produces a tighter, higher-scoring distribution. To prevent false 
 A key technical refinement was making our Ambiguity Guard **"Variant-Aware"**. 
 *   **The Problem**: If a bot has two similar question variants pointing to the same answer, the system would previously flag them as "ambiguous" because their scores were too close.
 *   **The Solution**: The system now compares the **Answers** of the top results. If the scores are close but they point to the **same answer node**, the match is allowed. This supports advanced FAQ structures where one answer has multiple semantic entry points.
-  
+
+### Query LifeCycle: Verified Logic
+
+We verified the 5-phase lifecycle through comprehensive integration testing:
+
+1.  **Phase 1: Arrival (Clean Wall)**: Verified that Bot A cannot see Bot B's data via filepath isolation.
+2.  **Phase 2: Exact Match**: Verified case-insensitive/whitespace-insensitive matching.
+3.  **Phase 3: Fuzzy Match**: Verified typo handling (e.g., "refinds" → "refunds").
+4.  **Phase 4: Semantic Search**: Verified intent matching (e.g., "money back" → "refunds").
+5.  **Phase 5: Safety Guardrails**:
+    - **Keyword Guard**: Rejects generic queries (e.g., "Tell me about finances") even if the semantic score is moderately high, unless keyword overlap exists.
+    - **Ambiguity Guard**: Prevents "guessing" when two FAQ questions are semantically too close.
+
+---
+
 #### Query LifeCycle / NLU Pipeline
 
 ```mermaid
@@ -424,7 +438,13 @@ graph TD
 ```
 
 <br><br>
+### Operational Observations
+- **Startup Time**: < 100ms (Down from ~8s).
+- **First-Query Latency**: ~1.5s (Model init overhead).
+- **Subsequent Queries**: < 50ms.
+- **Memory Footprint**: Significantly reduced due to ONNX Runtime optimizations.
 
+  
 
 
 
