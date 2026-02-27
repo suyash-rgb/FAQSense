@@ -1,0 +1,17 @@
+feat: enhance chatbot UI and improve enquiry management system
+
+Dashboard & Layout Improvements:
+- Redesigned "All Conversations" sidebar with slate-grey background, card-style items, and purple active indicators for better visual separation.
+- Fixed layout gaps in Dashboard by optimizing padding and min-heights in ChatbotPreview.
+- Added "Open Conversation" button to Enquiry Details modal to support direct context-switching.
+
+Chatbot UI/UX Enhancements:
+- Replaced text "Send" button with a custom image (`sendbutton.png`) and modern hover/active scales.
+- Improved chatbot fallback behavior: Input field remains visible during query registration to allow immediate rephrasing.
+- Added "Dismiss" button to the internal enquiry form for a smoother user experience.
+
+Bug Fixes & Refinements:
+- Fixed missing CSS import for EnquiryInbox, restoring modern styling to the enquiries tab.
+- Corrected visitor contact data mapping: Automated detection of email vs. phone, ensuring data is stored in the correct backend fields.
+- Updated Enquiry Table and Modal to correctly display visitor email/phone details.
+- Integrated `react-hot-toast` for better error and success messaging during bot creation.

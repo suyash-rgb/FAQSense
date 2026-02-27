@@ -68,6 +68,7 @@ const ChatWindow = ({ initialBotId, height = '520px', forceOpen = false, isWidge
         setMessages(prev => [...prev, userMsg]);
         setInput('');
         setIsTyping(true);
+        setShowEnquiryForm(false); // Hide fallback form if user manually type/sends something
         try {
             const response = await askQuestion(chatbotId, text, conversationId);
             setIsTyping(false);
@@ -92,9 +93,11 @@ const ChatWindow = ({ initialBotId, height = '520px', forceOpen = false, isWidge
     const handleEnquirySubmit = async (e) => {
         e.preventDefault();
         try {
+            const isEmail = enquiryData.contact.includes('@');
             await submitEnquiry(chatbotId, {
                 visitor_name: enquiryData.name,
-                visitor_contact: enquiryData.contact,
+                visitor_email: isEmail ? enquiryData.contact : null,
+                visitor_phone: !isEmail ? enquiryData.contact : null,
                 query_text: messages[messages.length - 2].text // Use the user's last question
             });
             setMessages(prev => [...prev, { text: "Thank you! Your enquiry has been registered. We'll get back to you soon.", sender: 'bot' }]);
@@ -154,7 +157,17 @@ const ChatWindow = ({ initialBotId, height = '520px', forceOpen = false, isWidge
                         {showEnquiryForm && (
                             <div className="enquiry-form-container">
                                 <form onSubmit={handleEnquirySubmit} className="mini-enquiry-form">
-                                    <p>Leave your details and we'll reply via email:</p>
+                                    <div className="enquiry-header">
+                                        <p>Leave your details and we'll reply via email:</p>
+                                        <button
+                                            type="button"
+                                            className="dismiss-enquiry"
+                                            onClick={() => setShowEnquiryForm(false)}
+                                            title="I'll just rephrase my question"
+                                        >
+                                            ×
+                                        </button>
+                                    </div>
                                     <input
                                         type="text"
                                         placeholder="Your Name"
@@ -175,17 +188,17 @@ const ChatWindow = ({ initialBotId, height = '520px', forceOpen = false, isWidge
                         )}
                     </div>
 
-                    {!showEnquiryForm && (
-                        <form className="chat-input" onSubmit={(e) => { e.preventDefault(); handleSend(input); }}>
-                            <input
-                                type="text"
-                                value={input}
-                                onChange={(e) => setInput(e.target.value)}
-                                placeholder="Type a message..."
-                            />
-                            <button type="submit">Send</button>
-                        </form>
-                    )}
+                    <form className="chat-input" onSubmit={(e) => { e.preventDefault(); handleSend(input); }}>
+                        <input
+                            type="text"
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            placeholder="Type a message..."
+                        />
+                        <button type="submit" aria-label="Send message">
+                            <img src="/sendbutton.png" alt="Send" className="send-icon" />
+                        </button>
+                    </form>
                 </div>
             )}
         </div>

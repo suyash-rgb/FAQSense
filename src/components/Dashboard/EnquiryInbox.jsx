@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { getEnquiries, updateEnquiry } from '../../utils/api';
+import './EnquiryInbox.css';
 
-const EnquiryInbox = ({ chatbot, userId }) => {
+const EnquiryInbox = ({ chatbot, userId, onNavigateToConversations }) => {
     const [enquiries, setEnquiries] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedEnquiry, setSelectedEnquiry] = useState(null);
@@ -86,7 +87,7 @@ const EnquiryInbox = ({ chatbot, userId }) => {
                             {enquiries.map(enquiry => (
                                 <tr key={enquiry.id}>
                                     <td>{enquiry.visitor_name}</td>
-                                    <td>{enquiry.visitor_contact}</td>
+                                    <td>{enquiry.visitor_email || enquiry.visitor_phone}</td>
                                     <td className="query-col">{enquiry.query_text}</td>
                                     <td>{new Date(enquiry.created_at).toLocaleDateString()}</td>
                                     <td>
@@ -122,7 +123,7 @@ const EnquiryInbox = ({ chatbot, userId }) => {
                         </div>
                         <div className="detail-item">
                             <label>Visitor:</label>
-                            <p>{selectedEnquiry.visitor_name} ({selectedEnquiry.visitor_contact})</p>
+                            <p>{selectedEnquiry.visitor_name} ({selectedEnquiry.visitor_email || selectedEnquiry.visitor_phone})</p>
                         </div>
                         <div className="detail-item">
                             <label>Admin Notes:</label>
@@ -133,6 +134,12 @@ const EnquiryInbox = ({ chatbot, userId }) => {
                             />
                         </div>
                         <div className="modal-actions">
+                            <button
+                                className="deploy-btn open-conv"
+                                onClick={() => onNavigateToConversations(selectedEnquiry)}
+                            >
+                                Open Conversation
+                            </button>
                             <button
                                 className="deploy-btn resolve"
                                 onClick={() => handleUpdateEnquiry('resolved')}

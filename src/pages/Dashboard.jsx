@@ -18,6 +18,7 @@ const Dashboard = () => {
     const [activeTab, setActiveTab] = useState('kb'); // kb, enquiries, analytics, preview, conversations, settings
     const [newBotName, setNewBotName] = useState('');
     const [loading, setLoading] = useState(true);
+    const [preselectedConvId, setPreselectedConvId] = useState(null);
 
     useEffect(() => {
         let active = true;
@@ -76,6 +77,12 @@ const Dashboard = () => {
 
     if (!isLoaded || loading) return <div className="loading">Loading FAQSense Dashboard...</div>;
 
+    const handleNavigateToConversations = (enquiry) => {
+        // In a real app, you'd link by conversation_id. 
+        // For now, we'll just switch tabs.
+        setActiveTab('conversations');
+    };
+
     const renderManagementView = () => (
         <>
             <header className="dashboard-header">
@@ -95,10 +102,21 @@ const Dashboard = () => {
 
             <section className="dashboard-content">
                 {activeTab === 'kb' && <KnowledgeBase chatbot={selectedBot} userId={user.id} onUploadSuccess={setActiveTab} />}
-                {activeTab === 'enquiries' && <EnquiryInbox chatbot={selectedBot} userId={user.id} />}
+                {activeTab === 'enquiries' && (
+                    <EnquiryInbox
+                        chatbot={selectedBot}
+                        userId={user.id}
+                        onNavigateToConversations={handleNavigateToConversations}
+                    />
+                )}
                 {activeTab === 'analytics' && <ChatbotAnalytics chatbot={selectedBot} userId={user.id} />}
                 {activeTab === 'preview' && <ChatbotPreview chatbot={selectedBot} />}
-                {activeTab === 'conversations' && <AllConversations chatbot={selectedBot} />}
+                {activeTab === 'conversations' && (
+                    <AllConversations
+                        chatbot={selectedBot}
+                        initialSelectedId={preselectedConvId}
+                    />
+                )}
                 {activeTab === 'settings' && <div className="tab-placeholder">Chatbot Settings Coming Soon</div>}
             </section>
         </>

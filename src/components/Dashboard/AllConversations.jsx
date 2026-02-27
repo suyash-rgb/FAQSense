@@ -3,11 +3,11 @@ import { useUser } from '@clerk/clerk-react';
 import { getConversations } from '../../utils/api';
 import './AllConversations.css';
 
-const AllConversations = ({ chatbot }) => {
+const AllConversations = ({ chatbot, initialSelectedId }) => {
     const { user } = useUser();
     const [conversations, setConversations] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [selectedId, setSelectedId] = useState(null);
+    const [selectedId, setSelectedId] = useState(initialSelectedId);
 
     useEffect(() => {
         const fetchConversations = async () => {
@@ -17,7 +17,13 @@ const AllConversations = ({ chatbot }) => {
                 // Sort by most recent
                 const sorted = data.sort((a, b) => new Date(b.started_at) - new Date(a.started_at));
                 setConversations(sorted);
-                if (sorted.length > 0) setSelectedId(sorted[0].id);
+
+                // If we have an initial ID, used it. Otherwise default to first one.
+                if (initialSelectedId) {
+                    setSelectedId(initialSelectedId);
+                } else if (sorted.length > 0) {
+                    setSelectedId(sorted[0].id);
+                }
             } catch (error) {
                 console.error("Error fetching conversations:", error);
             } finally {

@@ -247,10 +247,41 @@
     animation: fadeIn 0.3s ease;
 }
 
+.enquiry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
 .mini-enquiry-form p {
     font-size: 0.85rem;
-    margin-bottom: 12px;
+    margin: 0;
     color: #475569;
+    line-height: 1.4;
+}
+
+.dismiss-enquiry {
+    background: #f1f5f9;
+    border: none;
+    color: #64748b;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.dismiss-enquiry:hover {
+    background: #e2e8f0;
+    color: #0f172a;
 }
 
 .mini-enquiry-form input {
@@ -293,17 +324,32 @@
 }
 
 .chat-input button {
-    background: #6366f1;
-    color: white;
+    background: transparent;
     border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
     cursor: pointer;
-    font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+    padding: 0;
+}
+
+.send-icon {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.chat-input button:hover {
+    transform: scale(1.1);
+}
+
+.chat-input button:active {
+    transform: scale(0.9);
 }
 
 @keyframes fadeIn {
