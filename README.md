@@ -33,7 +33,7 @@ In the NLP domain, FAQSense demonstrates that Semantic Search (understanding mea
 ## 🛠️ Technology Stack
 
 - **Frontend**: React, React-Flow, TailwindCSS.
-- **Backend**: FastAPI, SQLAlchemy (MySQL/PostgreSQL), FastEmbed.
+- **Backend**: Python, FastAPI, SQLAlchemy (MySQL/PostgreSQL), FastEmbed.
 - **Persistence**: Hybrid Storage (Database for metadata + CSV for FAQ data with atomic-swap updates).
 - **Authentication**: Clerk.
 
@@ -47,6 +47,8 @@ This repository is organized into specific branches for development and deployme
 - `backend-opt-prod`: Production-optimized backend branch with FastEmbed and tuned metrics.
 
 ---
+
+## Installation Instructions
 
 ## 📈 Search Optimization & Tuning
 
