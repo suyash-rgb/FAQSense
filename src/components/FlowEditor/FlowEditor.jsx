@@ -189,7 +189,7 @@ const FlowEditorContent = ({ initialData, onSave }) => {
                 </div>
                 <div className="toolbar-right">
                     <button className="clear-btn" onClick={() => { setNodes([]); setEdges([]); }}>Clear All</button>
-                    <button className="save-btn" onClick={handleSave}>Apply & Save changes</button>
+                    <button className="save-btn" onClick={handleSave}>Apply & Save Changes</button>
                 </div>
             </div>
             <div className="flow-container" style={{ height: '600px', width: '100%', background: '#fafbfc' }}>

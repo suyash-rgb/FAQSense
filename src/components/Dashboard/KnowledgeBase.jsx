@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { uploadKnowledgeBase, getChatbotData } from '../../utils/api';
 import FlowEditor from '../FlowEditor/FlowEditor';
 
@@ -9,25 +9,19 @@ const KnowledgeBase = ({ chatbot, userId, onUploadSuccess }) => {
     const [showFlow, setShowFlow] = useState(false);
     const [csvData, setCsvData] = useState([]);
 
-    useEffect(() => {
-        let active = true;
-        const fetchData = async () => {
-            try {
-                const data = await getChatbotData(userId, chatbot.id);
-                if (active) {
-                    setCsvData(data);
-                }
-            } catch (error) {
-                console.error("Error fetching bot data:", error);
-            }
-        };
-        if (chatbot?.id) {
-            fetchData();
+    const fetchData = useCallback(async () => {
+        if (!chatbot?.id) return;
+        try {
+            const data = await getChatbotData(userId, chatbot.id);
+            setCsvData(data);
+        } catch (error) {
+            console.error("Error fetching bot data:", error);
         }
-        return () => {
-            active = false;
-        };
     }, [chatbot?.id, userId]);
+
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
 
     const handleFileChange = (e) => {
         const selectedFile = e.target.files[0];
@@ -73,9 +67,15 @@ const KnowledgeBase = ({ chatbot, userId, onUploadSuccess }) => {
                 text: `Success! Processed ${result.count} FAQs for ${chatbot.name}.`
             });
 
-            // Redirect to preview tab after brief delay
-            setTimeout(() => {
-                if (onUploadSuccess) onUploadSuccess('preview');
+            // Redirect based on source
+            setTimeout(async () => {
+                if (customData) {
+                    if (onUploadSuccess) onUploadSuccess('preview');
+                } else {
+                    // Refetch latest data from backend to ensure Flow Designer is accurate
+                    await fetchData();
+                    setShowFlow(true);
+                }
             }, 1000);
 
             if (!customData) {
