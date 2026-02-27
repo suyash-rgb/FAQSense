@@ -6,7 +6,7 @@ const ChatbotPreview = ({ chatbot }) => {
     const [copied, setCopied] = useState(false);
 
     const embedCode = `<script 
-  src="http://localhost:8000/static/widget.js" 
+  src="https://faqsense.onrender.com/static/widget.js" 
   data-bot-id="${chatbot.id}"
   async>
 </script>`;
