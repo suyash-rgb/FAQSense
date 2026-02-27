@@ -69,6 +69,8 @@ We verified the 5-phase lifecycle through comprehensive integration testing:
 ## Query LifeCycle
 
 graph TD
+
+
     A[User Query Arrival] --> B{Clean Wall Loading}
     B -->|Load CSV for BotID| C[Phase 1: Exact Match]
     
