@@ -105,7 +105,84 @@ Create a .env.local file in the frontend folder to define your API base URL:
 ```
 VITE_API_BASE_URL=http://localhost:8000
 ```
-### 3. Database Setup
+### 3. Database 
+
+#### 1. Data Dictionary 
+
+##### Table Overviews
+
+| Table Name | Description | Related Tables |
+| :--- | :--- | :--- |
+| **`admins`** | System administrators who can monitor and manage chatbots across the platform. | - |
+| **`users`** | Registered platform users (chatbot owners) authenticated via Clerk. | `chatbots` |
+| **`visitors`** | End-users who interact with the chatbots on external websites. | `conversations` |
+| **`chatbots`** | The AI agents created by users to serve FAQ content via CSV. | `users`, `conversations`, `enquiries`, `faq_analytics` |
+| **`conversations`** | Session-based interaction logs between a visitor and a specific chatbot. | `chatbots`, `visitors`, `messages` |
+| **`messages`** | Individual chat messages within a conversation. | `conversations` |
+| **`enquiries`** | Lead capture data when a visitor submits a contact form via the bot. | `chatbots` |
+| **`faq_analytics`** | Performance tracking for specific FAQ questions. | `chatbots` |
+
+---
+
+##### Column-Level Definitions
+
+##### Table: `users`
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `clerk_id` | String(255) | PK | Unique ID provided by Clerk Auth. |
+| `email` | String(255) | Unique, Index | User's primary email address. |
+| `full_name` | String(255) | - | Legal name of the user. |
+| `created_at` | DateTime | Default: Now | Timestamp when the user registered. |
+
+##### Table: `chatbots`
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | Integer | PK, Index | Unique internal ID for the chatbot. |
+| `user_id` | String(255) | FK (users) | Clerk ID of the owner. |
+| `name` | String(255) | - | Human-readable name of the bot. |
+| `csv_file_path` | String(255) | - | Storage path for the FAQ data source. |
+| `click_count` | Integer | Default: 0 | Total interactions recorded. |
+| `is_active` | Boolean | Default: True | Whether the bot is currently serving. |
+| `created_at` | DateTime | Default: Now | Timestamp of bot creation. |
+
+##### Table: `conversations`
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | String(255) | PK (UUID) | Unique session identifier. |
+| `chatbot_id` | Integer | FK (chatbots) | The bot serving this session. |
+| `visitor_id` | String(255) | FK (visitors) | The relative visitor identifying their session. |
+| `started_at` | DateTime | Default: Now | When the chat session began. |
+
+##### Table: `messages`
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | Integer | PK | Unique message ID. |
+| `conversation_id`| String(255) | FK (conv.) | The parent session UUID. |
+| `sender` | String(50) | - | Either `"visitor"` or `"bot"`. |
+| `content` | Text | - | The message body/content. |
+| `created_at` | DateTime | Default: Now | Time message was sent. |
+
+##### Table: `enquiries`
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | Integer | PK | Unique lead ID. |
+| `chatbot_id` | Integer | FK (chatbots) | Bot that generated this lead. |
+| `query_text` | Text | - | The question or message submitted by visitor. |
+| `visitor_name` | String(255) | - | Name of the person enquiring. |
+| `visitor_email` | String(255) | - | Contact email provided. |
+| `status` | String(50) | Default: "open" | State of the lead (open/resolved). |
+| `admin_notes` | Text | - | Internal notes for the admin. |
+
+##### Table: `faq_analytics`
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | Integer | PK | Unique record ID. |
+| `chatbot_id` | Integer | FK (chatbots) | Bot tracking this FAQ. |
+| `original_question`| Text | - | The exact question from the CSV source. |
+| `hit_count` | Integer | Default: 0 | Number of times this FAQ was triggered. |
+| `last_hit_at` | DateTime | Default: Now | Most recent usage timestamp. |
+
+#### 2. Entity Relationship (ER) Diagram
 ```mermaid
 erDiagram
     ADMIN {
@@ -172,6 +249,8 @@ erDiagram
     CONVERSATION ||--o{ MESSAGE : "contains"
 
 ```
+
+
 
 <br><br>
 ## Query LifeCycle / NLU Pipeline
