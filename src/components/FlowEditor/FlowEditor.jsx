@@ -41,8 +41,8 @@ const FlowEditorContent = ({ initialData, onSave }) => {
         );
     }, []);
 
-    const createPair = useCallback((index, qText = '', aText = '') => {
-        const id = index || Date.now();
+    const createPair = useCallback((yIndex, qText = '', aText = '') => {
+        const id = Math.random().toString(36).substring(2, 9);
         const qId = `q-${id}`;
         const aId = `a-${id}`;
 
@@ -53,7 +53,7 @@ const FlowEditorContent = ({ initialData, onSave }) => {
                 label: qText,
                 onChange: (val) => onNodeDataChange(qId, val)
             },
-            position: { x: 100, y: index * 180 + 50 },
+            position: { x: 100, y: yIndex * 180 + 50 },
         };
 
         const aNode = {
@@ -63,7 +63,7 @@ const FlowEditorContent = ({ initialData, onSave }) => {
                 label: aText,
                 onChange: (val) => onNodeDataChange(aId, val)
             },
-            position: { x: 500, y: index * 180 + 50 },
+            position: { x: 500, y: yIndex * 180 + 50 },
         };
 
         const edge = {
@@ -148,7 +148,7 @@ const FlowEditorContent = ({ initialData, onSave }) => {
 
     const addFAQPair = () => {
         const nextIndex = Math.floor(nodes.length / 2);
-        const { nodes: pNodes, edges: pEdges } = createPair(nextIndex + Date.now());
+        const { nodes: pNodes, edges: pEdges } = createPair(nextIndex);
         setNodes((nds) => nds.concat(pNodes));
         setEdges((eds) => eds.concat(pEdges));
 

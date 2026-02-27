@@ -44,10 +44,13 @@ const Hero = () => (
             </div>
         </div>
         <div className="hero-image">
-            <div className="robot-glitch-container">
-                {/* Placeholder for robot image/animation */}
+            <div className="abstract-visual-container">
                 <div className="robot-glow"></div>
-                <img src="https://img.icons8.com/isometric/512/bot.png" alt="Robot" />
+                <div className="abstract-mesh">
+                    {[...Array(6)].map((_, i) => (
+                        <div key={i} className="mesh-node"></div>
+                    ))}
+                </div>
             </div>
         </div>
     </section>
