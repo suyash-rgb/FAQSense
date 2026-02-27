@@ -16,9 +16,12 @@ const ChatWindow = ({ initialBotId, height = '520px', forceOpen = false, isWidge
     const [enquiryData, setEnquiryData] = useState({ name: '', contact: '' });
 
     const messagesEndRef = useRef(null);
+    const scrollContainerRef = useRef(null);
 
     const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+        }
     };
 
     const handleToggle = () => {
@@ -116,7 +119,7 @@ const ChatWindow = ({ initialBotId, height = '520px', forceOpen = false, isWidge
                         <button className="close-btn" onClick={handleToggle}>×</button>
                     </div>
 
-                    <div className="chat-messages">
+                    <div className="chat-messages" ref={scrollContainerRef}>
                         {messages.map((msg, idx) => (
                             <div key={idx} className={`message ${msg.sender}`}>
                                 <div className="message-bubble">
@@ -170,8 +173,6 @@ const ChatWindow = ({ initialBotId, height = '520px', forceOpen = false, isWidge
                                 </form>
                             </div>
                         )}
-
-                        <div ref={messagesEndRef} />
                     </div>
 
                     {!showEnquiryForm && (

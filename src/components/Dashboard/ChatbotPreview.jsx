@@ -96,16 +96,16 @@ const ChatbotPreview = ({ chatbot }) => {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                minHeight: '600px',
+                minHeight: '470px',
                 border: '1px solid #f1f5f9',
                 borderRadius: '24px',
-                marginTop: '24px',
+                marginTop: '12px',
                 background: 'radial-gradient(circle at top left, #ffffff, #f1f5f9)',
                 position: 'relative',
-                padding: '40px',
+                padding: '16px',
                 boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
             }}>
-                <ChatWindow initialBotId={chatbot.id} height="500px" forceOpen={true} />
+                <ChatWindow initialBotId={chatbot.id} height="470px" forceOpen={true} />
             </div>
         </div>
     );

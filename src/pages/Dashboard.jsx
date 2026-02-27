@@ -9,6 +9,7 @@ import ChatbotCard from '../components/Dashboard/ChatbotCard';
 import ChatbotPreview from '../components/Dashboard/ChatbotPreview';
 import AllConversations from '../components/Dashboard/AllConversations';
 import './Dashboard.css';
+import { toast } from 'react-hot-toast';
 
 const Dashboard = () => {
     const { user, isLoaded } = useUser();
@@ -27,10 +28,12 @@ const Dashboard = () => {
                     const data = await getChatbots(user.id);
                     if (active) {
                         console.log("Chatbots fetched:", data);
+                        if (data.length === 0) console.log("User currently has no chatbots.");
                         setChatbots(data);
                     }
                 } catch (error) {
                     console.error("Error fetching bots:", error);
+                    toast.error("Failed to load chatbots");
                 } finally {
                     if (active) {
                         console.log("Setting loading to false");
@@ -48,15 +51,26 @@ const Dashboard = () => {
 
     const handleCreateBot = async (e) => {
         e.preventDefault();
-        if (!newBotName.trim()) return;
+        console.log("Attempting to create bot with name:", newBotName);
+        if (!newBotName.trim()) {
+            console.log("Create bot failed: Name is empty.");
+            toast.error("Please enter a name for your chatbot");
+            return;
+        }
+
+        const loadingToast = toast.loading("Creating your chatbot...");
         try {
+            console.log("Calling createChatbot API for user:", user.id);
             const newBot = await createChatbot(user.id, newBotName);
+            console.log("Chatbot created successfully:", newBot);
             setChatbots([...chatbots, newBot]);
             setSelectedBot(newBot);
             setNewBotName('');
             setActiveTab('kb');
+            toast.success("Chatbot created successfully!", { id: loadingToast });
         } catch (error) {
             console.error("Error creating bot:", error);
+            toast.error("Failed to create chatbot. Please try again.", { id: loadingToast });
         }
     };
 
