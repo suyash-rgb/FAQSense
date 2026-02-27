@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import csv
 from sqlalchemy.orm import Session
-from app.models.platform import Chatbot, Enquiry
+from app.entities.platform import Chatbot, Enquiry
 from app.schemas.chatbot import ChatbotCreate, ChatbotUpdate
 from app.schemas.enquiry import EnquiryCreate, EnquiryUpdate
 from io import StringIO

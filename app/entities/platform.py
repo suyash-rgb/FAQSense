@@ -39,7 +39,9 @@ class Chatbot(Base):
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     
     owner = relationship("User", back_populates="chatbots")
-    conversations = relationship("Conversation", back_populates="chatbot")
+    conversations = relationship("Conversation", back_populates="chatbot", cascade="all, delete-orphan")
+    enquiries = relationship("Enquiry", back_populates="chatbot", cascade="all, delete-orphan")
+    analytics = relationship("FAQAnalytics", back_populates="chatbot", cascade="all, delete-orphan")
 
 class Conversation(Base):
     __tablename__ = "conversations"
@@ -74,7 +76,7 @@ class Enquiry(Base):
     admin_notes = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     
-    chatbot = relationship("Chatbot")
+    chatbot = relationship("Chatbot", back_populates="enquiries")
 
 class FAQAnalytics(Base):
     __tablename__ = "faq_analytics"
@@ -84,4 +86,4 @@ class FAQAnalytics(Base):
     hit_count = Column(Integer, default=0)
     last_hit_at = Column(DateTime, default=datetime.datetime.utcnow)
     
-    chatbot = relationship("Chatbot")
+    chatbot = relationship("Chatbot", back_populates="analytics")

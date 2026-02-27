@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Header, Request, HTTPException
 from fastapi_sqlalchemy import db
-from app.models.platform import User
+from app.entities.platform import User
 from app.core.config import settings
 from svix.webhooks import Webhook, WebhookVerificationError
 import json

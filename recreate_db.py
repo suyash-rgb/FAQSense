@@ -1,4 +1,4 @@
-from app.models.platform import Base
+from app.entities.platform import Base
 from app.core.config import settings
 from sqlalchemy import create_engine
 

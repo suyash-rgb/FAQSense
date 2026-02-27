@@ -3,7 +3,7 @@ Initial ER.png
 QueryLifeCycle.docx
 
 # AI Models
-models/
+/models/
 # Python
 __pycache__/
 *.py[cod]

@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app.models.platform import Conversation, Message, Visitor
+from app.entities.platform import Conversation, Message, Visitor
 from app.schemas.conversation import ConversationCreate, MessageCreate
 from typing import List, Optional
 import uuid
@@ -62,7 +62,7 @@ def get_conversation_history(db: Session, conversation_id: str) -> List[Message]
 
 def get_user_conversations(db: Session, user_id: str, chatbot_id: Optional[int] = None) -> List[Conversation]:
     # Joining with Chatbot to filter by user_id
-    from app.models.platform import Chatbot
+    from app.entities.platform import Chatbot
     query = db.query(Conversation).join(Chatbot).filter(Chatbot.user_id == user_id)
     
     if chatbot_id:

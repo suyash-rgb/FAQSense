@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app.models.platform import Enquiry
+from app.entities.platform import Enquiry
 from app.schemas.enquiry import EnquiryCreate, EnquiryUpdate
 from typing import List
 

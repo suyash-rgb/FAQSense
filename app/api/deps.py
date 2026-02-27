@@ -1,6 +1,6 @@
 from fastapi import Header, HTTPException, Depends
 from fastapi_sqlalchemy import db
-from app.models.platform import User
+from app.entities.platform import User
 
 async def get_current_user_id(x_user_id: str = Header(...)):
     # In a real app, this would verify a JWT token

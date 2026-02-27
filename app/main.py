@@ -5,7 +5,7 @@ from fastapi_sqlalchemy import DBSessionMiddleware, db
 from sqlalchemy import create_engine
 from app.api.endpoints import faq, webhooks, chatbots, conversations
 from app.core.config import settings
-from app.models.platform import Base
+from app.entities.platform import Base
 
 # Create tables on startup
 engine = create_engine(settings.DATABASE_URL)

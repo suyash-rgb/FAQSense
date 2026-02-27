@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app.models.platform import FAQAnalytics
+from app.entities.platform import FAQAnalytics
 from datetime import datetime
 from typing import List
 
@@ -38,7 +38,7 @@ def get_chatbot_stats(db: Session, chatbot_id: int):
     """
     Get aggregated stats for the chatbot dashboard.
     """
-    from app.models.platform import Enquiry, Conversation, FAQAnalytics, Chatbot
+    from app.entities.platform import Enquiry, Conversation, FAQAnalytics, Chatbot
     from sqlalchemy import func
 
     # Total hits across all FAQs
@@ -82,7 +82,7 @@ def increment_chatbot_click(db: Session, chatbot_id: int):
     """
     Increment the click count for a chatbot.
     """
-    from app.models.platform import Chatbot
+    from app.entities.platform import Chatbot
     chatbot = db.query(Chatbot).filter(Chatbot.id == chatbot_id).first()
     if chatbot:
         chatbot.click_count += 1
