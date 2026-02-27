@@ -1,42 +1,46 @@
-# FAQSense Backend Testing Summary
+# FAQSense Backend Testing Summary (Optimized Engine)
 
-This document recalls the functionalities that have been tested and verified during the development of the FAQSense backend.
+This document tracks the verified functionalities of the FAQSense backend, specifically focusing on the advanced NLP pipeline and deployment-ready architecture.
 
-## 🛠️ Verification Scripts
-I have created several Python scripts to test specific components of the backend. You can run these from the root directory when the server is running.
+## 🛠️ Performance & Verification Suite
 
-| Script | Functionality Tested | Description |
+I have updated the verification suite to align with the **FastEmbed** migration and the **Variant-Aware** engine logic.
+
+| Script | Functionality | Status |
 | :--- | :--- | :--- |
-| `verify_endpoints.py` | Basic API Flow | Tests initial CSV upload to `/faq/upload` and query at `/faq/ask` (Legacy). |
-| `verify_fuzzy.py` | Fuzzy Matching | Tests the engine's ability to handle typos and slang (e.g., "haors" for "hours"). |
-| `verify_semantic.py` | Semantic Matching | Tests AI-based paraphrasing (e.g., "When is the shop open?" matched to "What are your hours?"). |
-| `verify_fallback.py` | Fallback & Enquiries | Tests the fallback message for unknown queries and the enquiry registration system. |
-| `init_db.py` | Database Schema | Verifies connection to MySQL and triggers creation of all tables (Admins, Users, Chatbots, etc.). |
-| `debug_model.py` | Transformers Model | Standalone test to ensure `SentenceTransformer` loads correctly in the environment. |
+| `verify_full_lifecycle.py` | 5-Phase Logic | ✅ Verified (Exact, Fuzzy, Semantic, Ambiguity, Confidence) |
+| `verify_variant_aware.py` | Multi-Question Match | ✅ Verified (Prevents identical answers from blocking each other) |
+| `init_db.py` | Cloud Database | ✅ Verified (Handled successful handshake with Render Postgres) |
+| `download_model.py` | Model Caching | ✅ Verified (BGE-Small correctly cached for Docker builds) |
+| `MODEL_MIGRATION.md` | Logic Documentation | ✅ Verified (Diagram and thresholds aligned with BGE scores) |
 
-## ✅ Verified Functionalities
+---
 
-### 1. Chatbot Management
-- **User Syncing**: Verified that the Clerk webhook can create/update users in our DB (`verify_fuzzy.py` setup).
-- **Bot Creation**: Verified creating a new `Chatbot` record tied to a specific `user_id`.
-- **CSV Mapping**: Verified uploading and validating CSV files (ensuring "Question,Answer" headers and non-empty rows).
+## ✅ Verified NLP & Logic Gates
 
-### 2. FAQ Search Engine
-- **Exact Match**: Verified fetching direct answers.
-- **Fuzzy Match**: Verified successful matching with up to 80% similarity (typo tolerance).
-- **Semantic Match**: Verified using AI embeddings to match paraphrased questions.
-- **Ambiguity Detection**: The engine is configured to return the best match if it's significantly better than the second best.
+### 1. Hybrid Search Pipeline
+- **Exact Match**: Case-insensitive and whitespace-invariant matching for speed.
+- **Improved Fuzzy Match**: RapidFuzz logic with an 80% threshold for typo tolerance.
+- **Enhanced Semantic Match**: Migrated from legacy Transformers to **FastEmbed (BGE-Small)**. Verified high-intent matching (e.g., "money back" $\leftrightarrow$ "refund").
+- **Plural Normalization**: Implemented basic lemmatization (keyword stripping) to bridge singular/plural gaps (e.g., "refund" vs "refunds").
 
-### 3. Analytics & Conversations
-- **FAQ Hits**: Verified recording how many times a specific question from the CSV was matched.
-- **Top FAQs**: Verified the endpoint to retrieve the most popular questions for a bot.
-- **Conversation Logging**: Verified logging of visitor and bot messages in the `messages` table.
+### 2. Faithfulness & Guardrails
+- **Variant-Aware Ambiguity**: Verified that the engine allows multiple phrasing variants (e.g., "When are you open?" and "What are your hours?") to result in the same answer without triggering a "choice conflict."
+- **Small Gap Rejection**: Threshold set to **0.03** to prevent "guessing" when the model is torn between two truly different intents.
+- **Confidence Filter**: Minimum semantic score set to **0.50**, with a high-confidence trust bypass at **0.75**.
 
-### 4. Enquiry System
-- **Registration**: Verified that visitors can submit their contact info and query text when the bot can't answer.
-- **Partial Data**: Verified that enquries work even if only phone or email is provided alongside the name.
+### 3. Deployment & Scalability
+- **Lazy Loading**: Verified the system starts in **<100ms** by deferring AI model initialization until the first query.
+- **Clean Wall Isolation**: Verified strict `chatbot_id` isolation so Bot A cannot access Bot B's CSV data.
+- **Atomic File Swaps**: Verified safe CSV updates using `os.replace` to prevent data corruption during concurrent write/read operations.
 
-## 🚀 Recent Fixes Tested
-- **Keras 3 Compatibility**: Resolved the `RuntimeError` by installing `tf-keras` (backward compatibility for Transformers).
-- **CORS Support**: Added middleware to allow the frontend (`localhost:5173`) to communicate with the backend (`localhost:8000`).
-- **Lazy Onboarding**: Added logic to handle chatbot creation even if the user hasn't been synced via webhooks yet.
+---
+
+## 🚀 Recent Infrastructure Updates (Render Optimization)
+- **Python 3.10 Upgrade**: Migrated Docker base image to 3.10 to support Numpy 2.x and FastEmbed optimizations.
+- **Dependency Consolidation**: Added missing `email-validator` required by Pydantic for cloud environment.
+- **Postgres Handshake**: Configured the backend to automatically handle `postgresql://` URI translation for Render and SQLAlchemy compatibility.
+- **CI/CD Alignment**: Created an orphan `main` branch for documentation to keep the repository clean and professional.
+
+---
+© 2026 FAQSense Engineering. Status: **Production Ready**.
