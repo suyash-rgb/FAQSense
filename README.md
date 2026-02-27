@@ -1,6 +1,6 @@
-# FAQSense
+# FAQSense: Intelligent Multi-Tenant FAQ Automation Platform
 
-FAQSense is an AI-powered FAQ management and chatbot platform designed to help businesses automate customer support with high precision and low latency. It features a visual flow editor for managing FAQ data and a robust hybrid search engine for answering queries.
+FAQSense is an AI-powered high-performance, multi-tenant chatbot engine designed to provide instant, reliable customer support. By leveraging a Retrieval-Augmented Matcher (RAM) architecture. It allows multiple organizations to upload their proprietary FAQ data and instantly deploy customized, context-aware chatbots that are guaranteed to remain faithful to the source material. It features a visual flow editor for managing FAQ data and a robust hybrid search engine for answering queries.
 
 ## 🚀 Key Features
 
