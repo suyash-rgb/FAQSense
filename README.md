@@ -105,7 +105,73 @@ Create a .env.local file in the frontend folder to define your API base URL:
 ```
 VITE_API_BASE_URL=http://localhost:8000
 ```
+### 3. Database Setup
+```mermaid
+erDiagram
+    ADMIN {
+        string id PK
+        string email
+        string full_name
+    }
+    USER {
+        string clerk_id PK
+        string email
+        string full_name
+        datetime created_at
+    }
+    VISITOR {
+        string id PK "UUID or Session ID"
+        datetime first_seen
+    }
+    CHATBOT {
+        int id PK
+        string user_id FK
+        string name
+        string csv_file_path
+        int click_count
+        boolean is_active
+        datetime created_at
+    }
+    CONVERSATION {
+        string id PK "UUID"
+        int chatbot_id FK
+        string visitor_id FK
+        datetime started_at
+    }
+    MESSAGE {
+        int id PK
+        string conversation_id FK
+        string sender "visitor or bot"
+        text content
+        datetime created_at
+    }
+    ENQUIRY {
+        int id PK
+        int chatbot_id FK
+        text query_text
+        string visitor_name
+        string visitor_email
+        string visitor_phone
+        string status "open/resolved"
+        text admin_notes
+        datetime created_at
+    }
+    FAQ_ANALYTICS {
+        int id PK
+        int chatbot_id FK
+        text original_question
+        int hit_count
+        datetime last_hit_at
+    }
 
+    USER ||--o{ CHATBOT : "owns"
+    CHATBOT ||--o{ CONVERSATION : "has"
+    CHATBOT ||--o{ ENQUIRY : "receives"
+    CHATBOT ||--o{ FAQ_ANALYTICS : "tracks"
+    VISITOR ||--o{ CONVERSATION : "participates_in"
+    CONVERSATION ||--o{ MESSAGE : "contains"
+
+```
 
 <br><br>
 ## Query LifeCycle / NLU Pipeline
