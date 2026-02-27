@@ -312,7 +312,79 @@ To register a visitor's contact details when they ask a complex question:
 
 
 <br><br>
-## Query LifeCycle / NLU Pipeline
+
+## Technical Details
+
+### Core Technologies
+
+*   **FastAPI**: A high-performance, asynchronous backend framework for Python, used to serve the core API and handle webhook/request routing.
+*   **FastEmbed**: A lightweight, high-speed Python library for generating embeddings. It uses quantized models to provide high accuracy with minimal RAM overhead.
+*   **PyTorch/ONNX**: Optimized backend runtimes utilized for vector operations and model inference, ensuring fast response times on CPU-only environments.
+*   **React & Tailwind CSS**: The frontend is built using a modern architecture for highly responsive and visually appealing user interfaces.
+
+---
+
+### Search & NLU Pipeline
+
+#### 1. Multi-Phase "Waterfall" Matching
+To ensure maximum speed, every query passes through a sequential waterfall:
+*   **Phase 1: Exact Match**: Instant lookup for identical strings (case-insensitive and whitespace-invariant).
+*   **Phase 2: Fuzzy Search**: Uses `rapidfuzz` to handle typos and minor spelling variations (e.g., "refinds" → "refunds").
+*   **Phase 3: Semantic Search**: The final, most powerful layer for understanding deep intent using FastEmbed.
+*By failing fast at the earlier layers, we save compute cycles for simple queries.*
+
+#### 2. Design Choice: Why Cosine Similarity?
+FAQSense uses **Cosine Similarity** to compare query vectors against the FAQ knowledge base. This choice was driven by:
+*   **Length Agnosticism**: It measures the *angle* between vectors. This allows a 3-word query and a 20-word entry to match perfectly if their semantic "direction" is the same.
+*   **CPU Efficiency**: When paired with FastEmbed, calculating similarity across 1,000 rows takes less than **1ms**, eliminating the need for expensive GPUs.
+*   **Scalability**: Local vector math is faster than a network trip to an external vector database for typical FAQ datasets.
+
+#### 3. Hybrid Reranking (Faithfulness Guardrails)
+To prevent "hallucinated" matches where a model guesses intent without context:
+*   **Keyword Overlap**: The system extracts key terms, normalizing for simple plurals (e.g., "refund" matches "refunds").
+*   **Weighted Decision**: A match is only accepted if it meets a high semantic threshold *OR* passes a minimum keyword overlap count. This ensures the answer is faithful to the specific terms in the query.
+
+---
+
+### Performance & Security
+
+#### 1. Reactive In-Memory Caching
+To handle high traffic without stressing the disk:
+*   **CSV File Monitoring**: The system tracks the `mtime` (last modified) of CSV files. It only reloads data if a change is detected.
+*   **Embedding Caching**: FAQ vectors are cached in memory after the first calculation, enabling subsequent queries to perform at near-instant speeds.
+
+#### 2. Tenant Isolation (Clean Wall)
+FAQSense follows a strict **Clean Wall Architecture**:
+*   **File Isolation**: Each chatbot's data is stored in a separate, isolated `chatbot_{id}.csv` file. 
+*   **Stateless Engine**: The logic requires a specific `chatbot_id` for every operation, ensuring user data leakage between bots is architecturally impossible.
+
+---
+
+### Model Migration: From MiniLM to FastEmbed
+
+FAQSense recently underwent a significant architectural migration to optimize for performance and accuracy.
+
+#### Transition Overview
+*   **Legacy Model**: `sentence-transformers` (all-MiniLM-L6-v2) 
+*   **Current Model**: **FastEmbed** (`BAAI/bge-small-en-v1.5`)
+*   **Runtime**: Switched from PyTorch-heavy inference to **ONNX Runtime**, reducing startup time from ~8 seconds to **<100ms** (via lazy loading).
+
+#### Metric Tuning for BGE-small-en-v1.5
+The BGE model produces a tighter, higher-scoring distribution. To prevent false positives, we tuned our matching thresholds:
+
+| Metric | Legacy (MiniLM) | Current (BGE-Small) | Reasoning |
+| :--- | :--- | :--- | :--- |
+| **Semantic Match** | 0.35 | **0.50** | Prevents matches for unrelated queries. |
+| **Confidence Level** | 0.60 | **0.75** | Required score to bypass keyword overlap. |
+| **Ambiguity Gap** | 0.15 | **0.03** | Adjusted for the denser score gap in BGE. |
+| **Near-Perfect Match** | N/A | **0.92** | Absolute trust threshold for semantic matches. |
+
+#### Variant-Aware Ambiguity Logic
+A key technical refinement was making our Ambiguity Guard **"Variant-Aware"**. 
+*   **The Problem**: If a bot has two similar question variants pointing to the same answer, the system would previously flag them as "ambiguous" because their scores were too close.
+*   **The Solution**: The system now compares the **Answers** of the top results. If the scores are close but they point to the **same answer node**, the match is allowed. This supports advanced FAQ structures where one answer has multiple semantic entry points.
+  
+#### Query LifeCycle / NLU Pipeline
 
 ```mermaid
 graph TD
@@ -355,18 +427,6 @@ graph TD
 
 
 
-## 📈 Search Optimization & Tuning
-
-The system has been recently migrated from `sentence-transformers` to `fastembed`, resulting in significant performance gains. 
-
-| Metric | Optimized Value |
-| :--- | :--- |
-| **Search Model** | BAAI/bge-small-en-v1.5 |
-| **Semantic Threshold** | 0.50 |
-| **Ambiguity Gap** | 0.03 (Variant-Aware) |
-| **Confidence Bypass** | 0.75 |
-
-For detailed information on the model migration and metric tuning, refer to the `MODEL_MIGRATION.md` file in the `backend-opt-prod` branch.
 
 ---
 
