@@ -33,15 +33,15 @@ In the NLP domain, FAQSense demonstrates that Semantic Search (understanding mea
 
 ## Screens
 
-[!Dashboard](https://github.com/suyash-rgb/FAQSense/blob/3233964f3ec4c7fcff0678705bf16d8902b30a5b/img/dashboard1.png)
+![Dashboard](https://github.com/suyash-rgb/FAQSense/blob/3233964f3ec4c7fcff0678705bf16d8902b30a5b/img/dashboard1.png)
 <br><br>
-[!KnowledgeBase](https://github.com/suyash-rgb/FAQSense/blob/3233964f3ec4c7fcff0678705bf16d8902b30a5b/img/knowledgebasefielupload.png)
+![KnowledgeBase](https://github.com/suyash-rgb/FAQSense/blob/3233964f3ec4c7fcff0678705bf16d8902b30a5b/img/knowledgebasefielupload.png)
 <br><br>
-[!KnowledgeBaseFlowDesigner](https://github.com/suyash-rgb/FAQSense/blob/3233964f3ec4c7fcff0678705bf16d8902b30a5b/img/knowledgebaseflowdesigner.png)
+![KnowledgeBaseFlowDesigner](https://github.com/suyash-rgb/FAQSense/blob/3233964f3ec4c7fcff0678705bf16d8902b30a5b/img/knowledgebaseflowdesigner.png)
 <br><br>
-[!Enquriries](https://github.com/suyash-rgb/FAQSense/blob/3233964f3ec4c7fcff0678705bf16d8902b30a5b/img/enquiries.png)
+![Enquriries](https://github.com/suyash-rgb/FAQSense/blob/3233964f3ec4c7fcff0678705bf16d8902b30a5b/img/enquiries.png)
 <br><br>
-[!Enquiries](https://github.com/suyash-rgb/FAQSense/blob/3233964f3ec4c7fcff0678705bf16d8902b30a5b/img/enquiries2.png)
+![Enquiries](https://github.com/suyash-rgb/FAQSense/blob/3233964f3ec4c7fcff0678705bf16d8902b30a5b/img/enquiries2.png)
 
 ## 🛠️ Technology Stack
 
