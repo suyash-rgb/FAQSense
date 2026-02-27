@@ -250,6 +250,65 @@ erDiagram
 
 ```
 
+## Usage Guide
+
+### Running the Services
+
+To run the full application, you need to start both the backend and frontend servers.
+
+#### 1. Start Backend
+Run this from the project root (backend directory):
+```bash
+uvicorn app.main:app --reload
+```
+
+#### 2. Start Frontend
+Navigate to the frontend directory and start the development server:
+```bash
+npm run dev
+```
+
+---
+
+### Example API Interaction
+
+#### Endpoint: `POST /chatbots/{chatbot_id}/ask`
+(Note: Replace `{chatbot_id}` with your actual chatbot ID, e.g., `1`)
+
+**Payload:**
+```json
+{
+  "question": "What is the return policy?",
+  "conversation_id": "optional-session-uuid"
+}
+```
+
+**Response Example:**
+```json
+{
+  "answer": "Yes, we offer a 45-day return window for all premium members."
+}
+```
+
+> [!TIP]
+> **Advanced Responses**: If you have enabled semantic matching in the engine, your responses will be highly accurate even for slightly different phrasings.
+
+---
+
+#### Lead Generation (Enquiries)
+To register a visitor's contact details when they ask a complex question:
+
+**Endpoint:** `POST /chatbots/{chatbot_id}/enquiries`
+
+**Payload:**
+```json
+{
+  "query_text": "I need help with custom enterprise pricing",
+  "visitor_name": "John Doe",
+  "visitor_email": "john@example.com",
+  "visitor_phone": "+123456789"
+}
+```
 
 
 <br><br>
