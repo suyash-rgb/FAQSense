@@ -1,7 +1,8 @@
-fix: optimize hybrid engine and align metrics
+fix: optimize hybrid engine and variant metrics
 
-- Adjusted AMBIGUITY_THRESHOLD and CONFIDENCE_THRESHOLD for FastEmbed
-- Implemented plural normalization in keyword extraction logic
-- Added bypass for ambiguity check on high-confidence semantic matches
-- Integrated comprehensive MODEL_MIGRATION.md documentation
-- Verified all query lifecycle logic gates with integration tests
+- Adjusted thresholds for FastEmbed model (BGE-Small)
+- Added plural normalization to keyword extraction logic
+- Implemented variant-aware ambiguity guard (answer identity check)
+  When two questions have the same answer(question variants), the ambiguity guard is not triggered.
+- Added 0.92 score bypass for semantic ambiguity
+- Updated MODEL_MIGRATION.md and verified lifecycle tests

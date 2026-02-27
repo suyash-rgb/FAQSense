@@ -142,7 +142,8 @@ def find_answer(chatbot_id: int, csv_path: str, question: str) -> Tuple[Optional
             'index': idx,
             'score': float(score),
             'overlap_count': len(overlap),
-            'question': matched_q
+            'question': matched_q,
+            'answer': df.iloc[idx]["Answer"]
         })
     
     # Rerank by overlap count (primary) then semantic score (secondary)
@@ -160,7 +161,10 @@ def find_answer(chatbot_id: int, csv_path: str, question: str) -> Tuple[Optional
         if best_candidate['overlap_count'] == second_best['overlap_count']:
             gap = best_score - second_best['score']
             if gap < settings.AMBIGUITY_THRESHOLD:
-                return None, None
+                # Only return None if the answers are DIFFERENT (Ambiguity risk)
+                # If they are just variants of the same answer, we allow it.
+                if best_candidate['answer'] != second_best['answer']:
+                    return None, None
 
     # Threshold and Keyword Guard
     if best_score >= settings.SEMANTIC_MATCH_THRESHOLD:

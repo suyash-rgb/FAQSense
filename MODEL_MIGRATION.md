@@ -35,6 +35,12 @@ The BGE model produces a tighter, higher-scoring distribution compared to MiniLM
 | **Ambiguity Threshold** | 0.15 | **0.03** | Adjusted for the denser score gap in BGE. |
 | **Bypass Ambiguity** | N/A | **0.92** | If the semantic score is > 0.92, we trust it as a near-perfect match. |
 
+### Variant-Aware Ambiguity (Post-Migration Fix)
+We updated the `Ambiguity Guard` to be "Variant-Aware." 
+- **The Issue**: Previously, having two similar questions (variants) pointing to the same answer would trigger the ambiguity fallback because the "Score Gap" was too small.
+- **The Fix**: The system now compares the **Answers** of the top two results. If the scores are close but the answers are **identical**, the system allows the match. It only fallbacks if the top results point to **different** answers.
+- **Benefit**: Supports the React-Flow frontend strategy of adding multiple question variant nodes to a single answer node.
+
 ---
 
 ## 3. Query LifeCycle: Verified Logic
