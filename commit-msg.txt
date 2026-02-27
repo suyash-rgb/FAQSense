@@ -1,9 +1,7 @@
-fix: optimize backend for render and ram efficiency
+fix: optimize hybrid engine and align metrics
 
-- Migrated semantic matching from PyTorch to FastEmbed to reduce RAM from ~800MB to ~150MB.
-- Implemented lazy loading for AI models to prevent blocking server startup.
-- Pruned requirements.txt to remove unnecessary dependencies and added PostgreSQL drivers.
-- Fixed dynamic port binding and database URL protocol issues for Render deployment.
-- Resolved duplicate endpoint definition in chatbots API that caused OpenAPI warnings.
-- Added database connection logic to gracefully handle local vs production environments.
-- Resolved Startup Error
+- Adjusted AMBIGUITY_THRESHOLD and CONFIDENCE_THRESHOLD for FastEmbed
+- Implemented plural normalization in keyword extraction logic
+- Added bypass for ambiguity check on high-confidence semantic matches
+- Integrated comprehensive MODEL_MIGRATION.md documentation
+- Verified all query lifecycle logic gates with integration tests

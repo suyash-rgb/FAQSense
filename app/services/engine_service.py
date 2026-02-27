@@ -55,9 +55,18 @@ STOP_WORDS = {
 }
 
 def get_keywords(text: str) -> set:
-    """Extract significant lowercase words from text, ignoring stop words and punctuation."""
+    """Extract significant lowercase words from text, ignoring stop words, punctuation, and simple plurals."""
     words = re.findall(r'\b\w+\b', text.lower())
-    return {w for w in words if w not in STOP_WORDS}
+    # Basic normalization: strip trailing 's' if word length > 3 to help 'refund' match 'refunds'
+    normalized = []
+    for w in words:
+        if w in STOP_WORDS:
+            continue
+        if len(w) > 3 and w.endswith('s'):
+            normalized.append(w[:-1])
+        else:
+            normalized.append(w)
+    return set(normalized)
 
 def cosine_similarity(a, b):
     # FastEmbed returns a generator of numpy arrays
@@ -145,7 +154,8 @@ def find_answer(chatbot_id: int, csv_path: str, question: str) -> Tuple[Optional
     best_q = best_candidate['question']
     
     # Score Gap Analysis (Ambiguity)
-    if len(candidates) > 1:
+    # Bypass only if best match is extremely high (near-exact semantic)
+    if best_score < 0.92 and len(candidates) > 1:
         second_best = candidates[1]
         if best_candidate['overlap_count'] == second_best['overlap_count']:
             gap = best_score - second_best['score']

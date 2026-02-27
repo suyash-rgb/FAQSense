@@ -23,10 +23,10 @@ class Settings:
 
     CLERK_WEBHOOK_SECRET: str = os.getenv("CLERK_WEBHOOK_SECRET", "")
     FUZZY_MATCH_THRESHOLD: float = float(os.getenv("FUZZY_MATCH_THRESHOLD", "80.0"))
-    SEMANTIC_MATCH_THRESHOLD: float = float(os.getenv("SEMANTIC_MATCH_THRESHOLD", "0.35"))
+    SEMANTIC_MATCH_THRESHOLD: float = float(os.getenv("SEMANTIC_MATCH_THRESHOLD", "0.50"))
     MIN_KEYWORD_OVERLAP: int = int(os.getenv("MIN_KEYWORD_OVERLAP", "1"))
-    AMBIGUITY_THRESHOLD: float = float(os.getenv("AMBIGUITY_THRESHOLD", "0.15"))
-    CONFIDENCE_THRESHOLD: float = float(os.getenv("CONFIDENCE_THRESHOLD", "0.60"))
+    AMBIGUITY_THRESHOLD: float = float(os.getenv("AMBIGUITY_THRESHOLD", "0.03"))
+    CONFIDENCE_THRESHOLD: float = float(os.getenv("CONFIDENCE_THRESHOLD", "0.75"))
     
     @property
     def MODEL_PATH(self) -> str:
