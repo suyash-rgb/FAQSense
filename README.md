@@ -19,16 +19,16 @@ In the NLP domain, FAQSense demonstrates that Semantic Search (understanding mea
 
 ## 🚀 Key Features
 
-- **Visual FAQ Management**: A React-Flow based dashboard that allows users to map questions to answers visually, supporting multiple "Question Variants" for a single answer. <br>
-- **Zero-Hallucination Architecture**: Unlike GPT-based bots, FAQSense selects existing answers rather than generating new ones. <br>
+- **Visual FAQ Management**: A React-Flow based dashboard that allows users to map questions to answers visually, supporting multiple "Question Variants" for a single answer. <br><br>
+- **Zero-Hallucination Architecture**: Unlike GPT-based bots, FAQSense selects existing answers rather than generating new ones. <br><br>
 - **Hybrid Search Engine**: A 5-phase query lifecycle that ensures accurate delivery: <br>
   1. **Exact Match**: Instant response for perfect string matches.
-  2. **Fuzzy Search**: Handles typos and spelling variations using `token_set_ratio`.
+  2. **Fuzzy Search**: Robust handling of user errors via Levenshtein distance-based fuzzy matching.
   3. **Semantic Search**: Understands user intent using the **FastEmbed (BGE-Small)** model.
   4. **Faithfulness Guards**: Keyword reranking and ambiguity checks to prevent "hallucinations."
-  5. **Confidence Reranking**: Adaptive thresholds based on model confidence. <br>
-- **Multi-Tenant Isolation**: Secure data partitioning ensures that Organization A’s bot can never access Organization B’s data. <br>
-- **Optimized for Deployment**: Leveraging FastEmbed and ONNX Runtime for <100ms startup times and minimal RAM usage on platforms like Render. <br>
+  5. **Confidence Reranking**: Adaptive thresholds based on model confidence. <br><br>
+- **Multi-Tenant Isolation**: Secure data partitioning ensures that Organization A’s bot can never access Organization B’s data. <br><br>
+- **Optimized for Deployment**: Leveraging FastEmbed and ONNX Runtime for <100ms startup times and minimal RAM usage on platforms like Render. <br><br>
 
 ## 🛠️ Technology Stack
 
