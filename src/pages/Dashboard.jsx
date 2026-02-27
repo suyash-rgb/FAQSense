@@ -8,6 +8,7 @@ import ChatbotAnalytics from '../components/Dashboard/ChatbotAnalytics';
 import ChatbotCard from '../components/Dashboard/ChatbotCard';
 import ChatbotPreview from '../components/Dashboard/ChatbotPreview';
 import AllConversations from '../components/Dashboard/AllConversations';
+import ChatbotSettings from '../components/Dashboard/ChatbotSettings';
 import './Dashboard.css';
 import { toast } from 'react-hot-toast';
 
@@ -83,6 +84,11 @@ const Dashboard = () => {
         setActiveTab('conversations');
     };
 
+    const handleDeleteBot = () => {
+        setChatbots(chatbots.filter(b => b.id !== selectedBot.id));
+        setSelectedBot(null);
+    };
+
     const renderManagementView = () => (
         <>
             <header className="dashboard-header">
@@ -117,7 +123,13 @@ const Dashboard = () => {
                         initialSelectedId={preselectedConvId}
                     />
                 )}
-                {activeTab === 'settings' && <div className="tab-placeholder">Chatbot Settings Coming Soon</div>}
+                {activeTab === 'settings' && (
+                    <ChatbotSettings
+                        chatbot={selectedBot}
+                        userId={user.id}
+                        onDeleteSuccess={handleDeleteBot}
+                    />
+                )}
             </section>
         </>
     );

@@ -100,6 +100,13 @@ export const recordChatbotClick = async (chatbotId) => {
     return response.data;
 };
 
+export const deleteChatbot = async (userId, chatbotId) => {
+    const response = await api.delete(`/chatbots/${chatbotId}`, {
+        headers: getHeaders(userId)
+    });
+    return response.data;
+};
+
 // Legacy for backward compatibility
 export const sendMessage = async (message) => {
     return { text: `Please use askQuestion for real interaction. You said: ${message}` };
