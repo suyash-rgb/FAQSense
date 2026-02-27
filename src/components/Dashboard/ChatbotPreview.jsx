@@ -5,8 +5,9 @@ const ChatbotPreview = ({ chatbot }) => {
     const [showEmbed, setShowEmbed] = useState(false);
     const [copied, setCopied] = useState(false);
 
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://faqsense.onrender.com';
     const embedCode = `<script 
-  src="https://faqsense.onrender.com/static/widget.js" 
+  src="${baseUrl}/static/widget.js" 
   data-bot-id="${chatbot.id}"
   async>
 </script>`;
