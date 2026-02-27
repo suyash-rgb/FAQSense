@@ -25,7 +25,9 @@ FAQSense is an AI-powered FAQ management and chatbot platform designed to help b
 
 This repository is organized into specific branches for development and deployment:
 - `main`: (Current) Documentation and project overview.
+- `frontend`: FAQSense Platform for instantly buidling, deployment, analytics and maintenance of chatbots. 
 - `backend`: Core backend logic and API services.
+- `backend-prod`: Production-optimized backend branch with Sentence-Transformers. 
 - `backend-opt-prod`: Production-optimized backend branch with FastEmbed and tuned metrics.
 
 ---
