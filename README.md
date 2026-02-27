@@ -47,9 +47,28 @@ This repository is organized into specific branches for development and deployme
 - `backend-prod`: Production-optimized backend branch with Sentence-Transformers. 
 - `backend-opt-prod`: Production-optimized backend branch with FastEmbed and tuned metrics.
 
+
+
 ---
 
 ## Installation Instructions
+
+## Prerequisites
+
+- Python 3.9+
+- Node.js (for frontend)
+
+---
+
+## Step-by-Step Setup
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/suyash-rgb/FAQSense.git
+cd FAQSense
+```
+
+### 2. Setup Virtual Environment
 
 ## 📈 Search Optimization & Tuning
 
@@ -65,5 +84,19 @@ The system has been recently migrated from `sentence-transformers` to `fastembed
 For detailed information on the model migration and metric tuning, refer to the `MODEL_MIGRATION.md` file in the `backend-opt-prod` branch.
 
 ---
+
+## Contributing
+
+We welcome contributions!
+
+1. Fork the Project.
+
+2. Create your Feature Branch (git checkout -b feature/AmazingFeature).
+
+3. Commit your Changes (git commit -m 'Add some AmazingFeature').
+
+4. Push to the Branch (git push origin feature/AmazingFeature).
+
+5. Open a Pull Request.
 
 © 2026 FAQSense Team. All rights reserved.
