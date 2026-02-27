@@ -95,6 +95,7 @@ graph TD
     
     K --> L[Rephrase Query]
     K --> M[Query Registration]
+    L -->|New Attempt| A
 
     style H fill:#f96,stroke:#333,stroke-width:2px
     style I fill:#4ade80,stroke:#333,stroke-width:4px
