@@ -107,6 +107,50 @@ VITE_API_BASE_URL=http://localhost:8000
 ```
 
 
+<br><br>
+## Query LifeCycle / NLU Pipeline
+
+```mermaid
+graph TD
+    A[User Query Arrival] --> B{Clean Wall Loading}
+    B -->|Load CSV for BotID| C[Phase 1: Exact Match]
+    
+    C -->|No Match| D[Phase 2: Fuzzy Search]
+    C -->|Exact Match Found| Z[Return Answer]
+
+    D -->|Score < 80%| E[Phase 3: Semantic Search]
+    D -->|Score > 80% + Keyword Match| Z
+
+    E -->|FastEmbed BGE-Small| F[Vector Similarity Search]
+    F --> G[Rerank by Keyword Overlap]
+    
+    G --> H{Gate 4: Ambiguity Check}
+    H -->|Score Gap > 0.03| J{Gate 5: Confidence Check}
+    
+    H -->|Score Gap < 0.03| I{Variant-Aware Check}
+    I -->|Top 2 Answers Identical| J
+    I -->|Top 2 Answers Different| K[Smart Fallback]
+
+    J -->|Score > 0.75| Z
+    J -->|Score 0.50 - 0.75 + Keyword| Z
+    J -->|Insufficient Confidence| K
+    
+    K --> L[Rephrase Query]
+    K --> M[Query Registration]
+    L -->|New Attempt| A
+
+    style H fill:#f96,stroke:#333,stroke-width:2px
+    style I fill:#4ade80,stroke:#333,stroke-width:4px
+    style Z fill:#22c55e,color:#fff
+    style K fill:#ef4444,color:#fff
+    style L fill:#60a5fa,color:#fff
+    style M fill:#f87171,color:#fff
+```
+
+<br><br>
+
+
+
 ## 📈 Search Optimization & Tuning
 
 The system has been recently migrated from `sentence-transformers` to `fastembed`, resulting in significant performance gains. 
