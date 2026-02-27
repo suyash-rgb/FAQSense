@@ -53,22 +53,59 @@ This repository is organized into specific branches for development and deployme
 
 ## Installation Instructions
 
-## Prerequisites
+### Prerequisites
 
-- Python 3.9+
-- Node.js (for frontend)
+- **Python 3.9+** (Backend)
+- **Node.js 18+** & npm/yarn (Frontend)
 
 ---
 
-## Step-by-Step Setup
+### 1. Backend Setup
 
-### 1. Clone the Repository
+The backend serves the API and handles the embedding matching logic.
+
+#### 1. Clone and Navigate
 ```bash
 git clone https://github.com/suyash-rgb/FAQSense.git
 cd FAQSense
 ```
 
-### 2. Setup Virtual Environment
+#### 2. Setup Virtual Environment
+```
+python -m venv venv
+source venv/bin/activate   # On Windows: venv\Scripts\activate
+```
+
+#### 3. Install Dependencies
+```
+pip install -r requirements.txt
+```
+
+#### 4. Environment Configuration
+Create a .env file in the root directory (refer to .env.example if available) and add your configurations (e.g., DATABASE_URL).
+
+
+### 2. Frontend Setup
+The frontend provides the management dashboard and the chat interface. Note: Ensure you are on the ``frontend`` branch if working on the UI specifically.
+
+#### 1. Navigate to Frontend Directory:
+```
+cd frontend
+```
+
+#### 2. Install Dependencies:
+```
+npm install
+# OR
+yarn install
+```
+
+#### 3. Environment Configuration
+Create a .env.local file in the frontend folder to define your API base URL:
+```
+VITE_API_BASE_URL=http://localhost:8000
+```
+
 
 ## 📈 Search Optimization & Tuning
 
