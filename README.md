@@ -1,4 +1,8 @@
 # FAQSense: Intelligent Multi-Tenant FAQ Automation Platform
+[![FastAPI](https://img.shields.io/badge/FastAPI-05998B?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![FastEmbed](https://img.shields.io/badge/FastEmbed-FFD43B?style=for-the-badge&logo=python&logoColor=blue)](https://qdrant.github.io/fastembed/)
+
 
 FAQSense is an AI-powered high-performance, multi-tenant chatbot engine designed to provide instant, reliable customer support. By leveraging a Retrieval-Augmented Matcher (RAM) architecture. It allows multiple organizations to upload their proprietary FAQ data and instantly deploy customized, context-aware chatbots that are guaranteed to remain faithful to the source material. It features a visual flow editor for managing FAQ data and a robust hybrid search engine for answering queries.
 
@@ -11,7 +15,12 @@ In the current AI landscape, Large Language Models (LLMs) often suffer from “h
 While LLMs are powerful and can perform heavy lifting tasks such as semantic similarity search or contextual matching, relying on them exclusively introduces fragility. Our motivation is to design a system that does not depend on them for core functionality. By combining deterministic methods, curated knowledge bases, and lightweight NLP techniques, FAQSense aims to deliver consistent, trustworthy answers while still offering the conversational fluidity users expect from modern AI systems.
 
 ### Main Objective
-The primary goal is to provide a low-latency, scalable infrastructure where "Knowledge Retrieval" is the priority. FAQSense ensures that a company's support bot only speaks from the provided "textbook" (CSV data), ensuring 100% factual consistency.
+The primary goal is to provide a low-latency, scalable infrastructure where "Knowledge Retrieval" is the priority. 
+
+#### The RAM Architecture (vs. RAG)
+Unlike traditional **Retrieval-Augmented Generation (RAG)** which uses an LLM to generate a response based on retrieved data, FAQSense uses a **Retrieval-Augmented Matcher (RAM)**. 
+- **Selection over Generation**: Instead of synthesizing a new sentence (which introduces hallucination risk), our engine selects the most semantically relevant, pre-approved answer from your database.
+- **Deterministic Trust**: This ensures that a company's support bot only speaks from the provided "textbook" (CSV data), ensuring 100% factual consistency.
 
 ### Why it Matters
 In the NLP domain, FAQSense demonstrates that Semantic Search (understanding meaning) can be more valuable than Generative Text for closed-domain applications like customer service. It showcases the practical application of high-dimensional vector embeddings and efficient similarity scoring in a production environment.
@@ -64,7 +73,9 @@ In the NLP domain, FAQSense demonstrates that Semantic Search (understanding mea
 
 - **Frontend**: React, React-Flow, TailwindCSS.
 - **Backend**: Python, FastAPI, SQLAlchemy (MySQL/PostgreSQL), FastEmbed.
-- **Persistence**: Hybrid Storage (Database for metadata + CSV for FAQ data with atomic-swap updates).
+- **Persistence**: **Hybrid Storage Strategy**
+  - **Relational (PostgreSQL/MySQL)**: Used for high-level metadata, user authentication, and analytics.
+  - **Flat-File (CSV)**: Used for the core knowledge base. This allows for **Atomic Swaps** (updating a bot's logic without downtime) and makes knowledge bases easily version-controllable and portable.
 - **Authentication**: Clerk.
 
 ## 📁 Repository Structure
