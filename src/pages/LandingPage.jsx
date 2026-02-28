@@ -7,11 +7,14 @@ import {
     SignUpButton,
     UserButton,
 } from "@clerk/clerk-react";
+import Logo from '../components/Common/Logo';
 import './LandingPage.css';
 
 const Navbar = () => (
     <nav className="navbar">
-        <div className="nav-logo">FAQSense<span>.ai</span></div>
+        <Link to="/" className="brand-link">
+            <Logo className="navbar-logo" />
+        </Link>
         <div className="nav-links">
             <a href="#features">Features</a>
             <a href="#reviews">Reviews</a>
@@ -104,7 +107,7 @@ const Footer = () => (
     <footer className="footer">
         <div className="footer-content">
             <div className="footer-brand">
-                <h3>FAQSense.ai</h3>
+                <Logo className="footer-logo" />
                 <p>Your robot-first support partner.</p>
             </div>
             <div className="footer-bottom">

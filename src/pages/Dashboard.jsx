@@ -9,6 +9,7 @@ import ChatbotCard from '../components/Dashboard/ChatbotCard';
 import ChatbotPreview from '../components/Dashboard/ChatbotPreview';
 import AllConversations from '../components/Dashboard/AllConversations';
 import ChatbotSettings from '../components/Dashboard/ChatbotSettings';
+import Logo from '../components/Common/Logo';
 import './Dashboard.css';
 import { toast } from 'react-hot-toast';
 
@@ -171,7 +172,9 @@ const Dashboard = () => {
     return (
         <div className="dashboard-container">
             <aside className="dashboard-sidebar">
-                <div className="sidebar-logo">FAQSense<span>.ai</span></div>
+                <div className="sidebar-logo">
+                    <Logo className="sidebar-brand-logo" />
+                </div>
                 <nav className="sidebar-nav">
                     <Link to="/" className="nav-item">🏠 Home</Link>
                     <div

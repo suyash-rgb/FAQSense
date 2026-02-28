@@ -41,14 +41,14 @@
     border-bottom: 1px solid rgba(0, 242, 255, 0.1);
 }
 
-.nav-logo {
-    font-size: 1.5rem;
-    font-weight: 800;
-    letter-spacing: -1px;
+.brand-link {
+    text-decoration: none;
 }
 
-.nav-logo span {
-    color: var(--robot-accent);
+.navbar-logo {
+    padding: 6px 16px;
+    background: rgba(13, 15, 20, 0.5);
+    backdrop-filter: blur(5px);
 }
 
 .nav-links {
@@ -458,4 +458,16 @@
     .nav-links {
         display: none;
     }
+}
+
+.footer-logo {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin-bottom: 20px;
+}
+
+.footer-logo::before {
+    display: none !important;
 }

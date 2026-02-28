@@ -1,0 +1,81 @@
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 24px;
+    background: #0d0f14;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.logo-container::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -20%;
+    width: 140%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.logo-container:hover {
+    border-color: rgba(168, 85, 247, 0.4);
+    box-shadow: 0 0 25px rgba(168, 85, 247, 0.2);
+    transform: translateY(-1px);
+}
+
+.logo-icon-wrapper {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.4));
+}
+
+.logo-svg {
+    width: 38px;
+    height: 38px;
+}
+
+.logo-text {
+    position: relative;
+    z-index: 1;
+    font-size: 2rem;
+    color: white;
+    letter-spacing: -0.5px;
+    font-family: 'Outfit', sans-serif;
+    display: flex;
+    align-items: baseline;
+}
+
+.logo-faq {
+    font-weight: 800;
+}
+
+.logo-sense {
+    font-weight: 300;
+}
+
+@media (max-width: 480px) {
+    .logo-container {
+        padding: 6px 16px;
+        gap: 8px;
+    }
+
+    .logo-svg {
+        width: 30px;
+        height: 30px;
+    }
+
+    .logo-text {
+        font-size: 1.5rem;
+    }
+}

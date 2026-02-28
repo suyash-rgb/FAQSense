@@ -1,8 +1,0 @@
-feat: implement chatbot settings tab and safe deletion flow
-
-Detailed Description:
-
-UI/UX: Replaced settings placeholder with a functional ChatbotSettings component. Added premium CSS for the settings grid and danger zone.
-Logic: Implemented handleDeleteBot in Dashboard.jsx for seamless state transitions after bot removal.
-Safety: Added name-match confirmation for deletion to prevent accidental data loss.
-API: Added deleteChatbot to the Axios utility layer.
