@@ -1,7 +1,10 @@
 # FAQSense: Intelligent Multi-Tenant FAQ Automation Platform
 
 ![FAQSense Banner](https://img.shields.io/badge/FAQSense-AI--Powered--FAQ--Automation--Management-blueviolet?style=for-the-badge&logo=probot)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT) 
+
+<br><br>
+
 [![FastAPI](https://img.shields.io/badge/FastAPI-05998B?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
 [![FastEmbed](https://img.shields.io/badge/FastEmbed-FFD43B?style=for-the-badge&logo=python&logoColor=blue)](https://qdrant.github.io/fastembed/)
