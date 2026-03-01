@@ -1,0 +1,13 @@
+fix: refactor embed system and fix script paths
+
+RCA:
+1. Incorrect script path: The dashboard was suggesting '/static/widget.js' from the backend instead of the frontend '/embed.js'.
+2. URL mismatch: Users were attempting to use '/public/embed.js' which is served from the root as '/embed.js' on Netlify.
+3. Missing UI logic: The embed.js script lacked logic to create a floating bubble or iframe container, requiring a manual HTML element that was often missing.
+4. Static URLs: Hardcoded frontend URLs in embed.js caused issues across different environments (local vs production).
+
+FIX:
+1. Refactored embed.js to automatically create a floating chat bubble and iframe container using modern CSS (glassmorphism/gradients).
+2. Implemented postMessage communication between the iframe (ChatWindow) and the parent window (embed.js) to sync the toggle state.
+3. Updated ChatbotPreview.jsx to generate the correct script URL using the frontend base URL and to use the standardized 'data-id' attribute.
+4. Added environment auto-detection in embed.js to resolve the correct base URL from the script source itself.

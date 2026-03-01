@@ -25,11 +25,17 @@ const ChatWindow = ({ initialBotId, height = '520px', forceOpen = false, isWidge
     };
 
     const handleToggle = () => {
+        const newOpenState = !isOpen;
         if (!isOpen) {
             // Record click when opening
             recordChatbotClick(chatbotId).catch(err => console.error("Error recording click:", err));
         }
-        setIsOpen(!isOpen);
+        setIsOpen(newOpenState);
+
+        // Notify parent if in widget mode
+        if (isWidget) {
+            window.parent.postMessage({ type: 'faqsense-toggle', isOpen: newOpenState }, '*');
+        }
     };
 
     useEffect(() => {
