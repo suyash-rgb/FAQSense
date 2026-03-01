@@ -1,6 +1,6 @@
 (function () {
-    const scriptUrl = 'http://localhost:5173/embed.js'; // Adjust for production
-    const appUrl = 'http://localhost:5173?mode=widget';
+    const scriptUrl = 'https://faqsense.onrender.com/embed.js'; // Adjust for production
+    const appUrl = 'https://faqsense.onrender.com?mode=widget';
 
     function init() {
         const container = document.getElementById('faqsense-chatbot');
