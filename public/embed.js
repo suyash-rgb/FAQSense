@@ -1,18 +1,27 @@
 (function () {
-    const scriptUrl = 'https://faqsense.onrender.com/embed.js'; // Adjust for production
-    const appUrl = 'https://faqsense.onrender.com?mode=widget';
+    // 1. UPDATE THIS: Use your FRONTEND URL (e.g., https://faqsense.netlify.app)
+    // DO NOT use the onrender.com Backend URL here.
+    const frontendBaseUrl = '${import.meta.env.VITE_FRONTEND_URL}';
+
+    const scriptUrl = `${frontendBaseUrl}/embed.js`;
+    const appUrl = `${frontendBaseUrl}/?mode=widget`;
 
     function init() {
         const container = document.getElementById('faqsense-chatbot');
         if (!container) return;
 
-        // Create iframe to isolate styles and React environment
+        // 2. Extract chatbotId from the script tag's data-id attribute (e.g., data-id="5")
+        const currentScript = document.currentScript || document.querySelector('script[src*="embed.js"]');
+        const botId = currentScript ? (currentScript.getAttribute('data-id') || '1') : '1';
+
         const iframe = document.createElement('iframe');
-        iframe.src = appUrl;
+        // 3. Pass the bot ID to the React app via URL params
+        iframe.src = `${appUrl}&id=${botId}`;
+
         iframe.style.position = 'fixed';
-        iframe.style.bottom = '0';
-        iframe.style.right = '0';
-        iframe.style.width = '420px'; // Wide enough for the open window
+        iframe.style.bottom = '20px';
+        iframe.style.right = '20px';
+        iframe.style.width = '420px';
         iframe.style.height = '600px';
         iframe.style.border = 'none';
         iframe.style.zIndex = '999999';
@@ -20,12 +29,6 @@
         iframe.setAttribute('allowtransparency', 'true');
 
         container.appendChild(iframe);
-
-        // Optional: communication between iframe and parent
-        window.addEventListener('message', (event) => {
-            if (event.origin !== new URL(appUrl).origin) return;
-            // Handle events from the chatbot if needed
-        });
     }
 
     if (document.readyState === 'complete') {
