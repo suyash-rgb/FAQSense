@@ -1,23 +1,29 @@
 (function () {
-    // 1. UPDATE THIS: Use your FRONTEND URL (e.g., https://faqsense.netlify.app)
-    // DO NOT use the onrender.com Backend URL here.
+    // 1. UPDATE THIS: For local testing, use http://localhost:5173 
+    // For netlify, keep it as faqsense.netlify.app
     const frontendBaseUrl = 'https://faqsense.netlify.app';
 
     const scriptUrl = `${frontendBaseUrl}/embed.js`;
     const appUrl = `${frontendBaseUrl}/?mode=widget`;
 
+    console.log("[FAQSense] Initializing with App URL:", appUrl);
+
     function init() {
         const container = document.getElementById('faqsense-chatbot');
-        if (!container) return;
+        if (!container) {
+            console.error("[FAQSense] Container #faqsense-chatbot not found on this page!");
+            return;
+        }
 
-        // 2. Extract chatbotId from the script tag's data-id attribute (e.g., data-id="5")
         const currentScript = document.currentScript || document.querySelector('script[src*="embed.js"]');
         const botId = currentScript ? (currentScript.getAttribute('data-id') || '1') : '1';
 
+        console.log("[FAQSense] Loading Bot ID:", botId);
+
         const iframe = document.createElement('iframe');
-        // 3. Pass the bot ID to the React app via URL params
         iframe.src = `${appUrl}&id=${botId}`;
 
+        // Premium styling
         iframe.style.position = 'fixed';
         iframe.style.bottom = '20px';
         iframe.style.right = '20px';
@@ -26,7 +32,9 @@
         iframe.style.border = 'none';
         iframe.style.zIndex = '999999';
         iframe.style.backgroundColor = 'transparent';
-        iframe.setAttribute('allowtransparency', 'true');
+
+        // Ensure browser allows cross-document rendering
+        iframe.setAttribute('allow', 'cross-origin-isolated');
 
         container.appendChild(iframe);
     }
