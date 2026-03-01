@@ -1,7 +1,7 @@
 (function () {
     // 1. UPDATE THIS: Use your FRONTEND URL (e.g., https://faqsense.netlify.app)
     // DO NOT use the onrender.com Backend URL here.
-    const frontendBaseUrl = '${import.meta.env.VITE_FRONTEND_URL}';
+    const frontendBaseUrl = 'https://faqsense.netlify.app';
 
     const scriptUrl = `${frontendBaseUrl}/embed.js`;
     const appUrl = `${frontendBaseUrl}/?mode=widget`;
