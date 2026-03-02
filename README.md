@@ -416,15 +416,37 @@ The BGE model produces a tighter, higher-scoring distribution. To prevent false 
 
 | Metric | Legacy (MiniLM) | Current (BGE-Small) | Reasoning |
 | :--- | :--- | :--- | :--- |
-| **Semantic Match** | 0.35 | **0.50** | Prevents matches for unrelated queries. |
-| **Confidence Level** | 0.60 | **0.75** | Required score to bypass keyword overlap. |
-| **Ambiguity Gap** | 0.15 | **0.03** | Adjusted for the denser score gap in BGE. |
-| **Near-Perfect Match** | N/A | **0.92** | Absolute trust threshold for semantic matches. |
+| **Semantic Match** | 0.35 | **0.50** | The "Entry Gate" bouncer. |
+| **Confidence Level** | 0.60 | **0.75** | Automatic pass for high-intent matches. |
+| **Keyword Guard** | N/A | **Min 2 Keywords** | Mathematical vs. Reality cross-reference. |
+| **Ambiguity Gap** | 0.15 | **0.03** | Tie-breaker gap between top two candidates. |
+| **Near-Perfect Match** | N/A | **0.92** | Absolute trust (bypass all checks). |
 
-#### Variant-Aware Ambiguity Logic
-A key technical refinement was making our Ambiguity Guard **"Variant-Aware"**. 
-*   **The Problem**: If a bot has two similar question variants pointing to the same answer, the system would previously flag them as "ambiguous" because their scores were too close.
-*   **The Solution**: The system now compares the **Answers** of the top results. If the scores are close but they point to the **same answer node**, the match is allowed. This supports advanced FAQ structures where one answer has multiple semantic entry points.
+---
+
+### Understanding the 5 Levels of Matching Logic
+
+To ensure 100% accuracy and zero hallucinations, FAQSense uses a layered verification system for every semantic query:
+
+#### 1. The Semantic Match Threshold (0.50) — **The "Entry Gate"**
+If a query doesn't score at least **0.50** in vector similarity, the system immediately flags it as "I don't know."
+*   **Analogy**: It’s like a bouncer at a club. If you aren't even on the list, you don't get in. This prevents the bot from giving a "best guess" for totally random gibberish.
+
+#### 2. The Confidence Level (0.75) — **The "Automatic Pass"**
+If a match scores above **0.75**, the system is highly confident. We bypass the keyword check because the semantic "direction" is overwhelming.
+*   **Example**: User asks *"What's the cost?"* and the FAQ is *"Service Pricing"*. The score is **0.82**—a direct hit.
+
+#### 3. The Keyword Guard — **The "Hybrid Check"**
+If a score falls between **0.50 and 0.75**, the system says, *"I think I know, but let me check for keywords."* It cross-references significant words (e.g., "Refund", "Payment"). If terms match, it allows the result.
+*   **Why it Matters**: It prevents **"Semantic Drifting"**—where two things sound mathematically similar but have different real-world meanings in a business context.
+
+#### 4. The Ambiguity Gap (0.03) — **The "Tie-Breaker"**
+If the top two answers are within **0.03** of each other, the bot pauses. It’s too close to call.
+*   **The "Variant-Aware" Twist**: If both close results point to the **same answer node** (configured via our Flow Designer), the bot proceeds anyway. This allows multiple ways of asking the same question without triggering accidental confusion errors.
+
+#### 5. Near-Perfect Match (0.92) — **"Absolute Trust"**
+At a score of **0.92**, we treat the user's intent as effectively identical to the FAQ entry. All secondary guardrails are bypassed for instantaneous delivery.
+
 
 ### Query LifeCycle: Verified Logic
 
