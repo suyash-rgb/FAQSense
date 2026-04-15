@@ -2,9 +2,6 @@
 
 ![FAQSense Banner](https://img.shields.io/badge/FAQSense-AI--Powered--FAQ--Automation--Management-blueviolet?style=for-the-badge&logo=probot)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
-[![FastAPI](https://img.shields.io/badge/FastAPI-05998B?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
-[![FastEmbed](https://img.shields.io/badge/FastEmbed-FFD43B?style=for-the-badge&logo=python&logoColor=blue)](https://qdrant.github.io/fastembed/)
 
 FAQSense is an AI-powered high-performance, multi-tenant chatbot engine designed to provide instant, reliable customer support. By leveraging a Retrieval-Augmented Matcher (RAM) architecture. It allows multiple organizations to upload their proprietary FAQ data and instantly deploy customized, context-aware chatbots that are guaranteed to remain faithful to the source material. It features a visual flow editor for managing FAQ data and a robust hybrid search engine for answering queries.
 
